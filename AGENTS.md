@@ -2,6 +2,7 @@
 
 > Static context. Loaded every session. `CLAUDE.md` and `GEMINI.md` point here — **single source of truth.**
 > Keep this lean: it is paid for on every interaction. Procedural detail lives in **skills** (dynamic context).
+> **Multi-tool:** works with Claude Code, OpenAI Codex, and Gemini CLI — see [docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md) §Multi-tool harness.
 > The engineered harness around the model is documented in [docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md).
 
 ## Mission
@@ -40,7 +41,7 @@ Tests: `pytest` + `pytest-asyncio` + `respx` (backend mocked). Lint: `ruff`.
 |---|---|
 | Instructions (static) | this file |
 | Knowledge | [docs/](docs/) — ADRs, [GCP stack](docs/GCP_AGENTIC_STACK.md), [STATUS](STATUS.md), [ROADMAP](ROADMAP.md), [TECH_DEBT](TECH_DEBT.md) |
-| Skills (dynamic) | [`.claude/skills/`](.claude/skills/) — load on demand |
+| Skills (dynamic) | [`.agents/skills/`](.agents/skills/) — canonical `SKILL.md`, loaded on demand. Claude reads via `.claude/skills →` symlink; Codex reads `.agents/skills` natively; Gemini via [`.gemini/commands/`](.gemini/commands/) |
 | Tools | [`app/tools/`](app/tools/) + the backend MCP/OpenAPI/x402 contract |
 | Memory / decisions | [`docs/adr/`](docs/adr/) · state in STATUS / ROADMAP |
 | Guardrails / hooks | [`scripts/harness_guardrails.py`](scripts/harness_guardrails.py) · `.pre-commit-config.yaml` · `.github/workflows/` |
