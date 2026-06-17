@@ -41,7 +41,7 @@ Tests: `pytest` + `pytest-asyncio` + `respx` (backend mocked). Lint: `ruff`.
 | Context type | Location |
 |---|---|
 | Instructions (static) | this file |
-| Knowledge | [docs/](docs/) — ADRs, [GCP stack](docs/GCP_AGENTIC_STACK.md), [STATUS](STATUS.md), [ROADMAP](ROADMAP.md), [TECH_DEBT](TECH_DEBT.md) |
+| Knowledge | [docs/README.md](docs/README.md) — the docs index & taxonomy (ADRs, guides, plans, runbooks); state in [STATUS](STATUS.md)/[ROADMAP](ROADMAP.md)/[TECH_DEBT](TECH_DEBT.md) |
 | Skills (dynamic) | [`.agents/skills/`](.agents/skills/) — canonical `SKILL.md`, loaded on demand. Claude reads via `.claude/skills →` symlink; Codex reads `.agents/skills` natively; Gemini via [`.gemini/commands/`](.gemini/commands/) |
 | Tools | [`app/tools/`](app/tools/) + the backend MCP/OpenAPI/x402 contract |
 | Memory / decisions | [`docs/adr/`](docs/adr/) · state in STATUS / ROADMAP |

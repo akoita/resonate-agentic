@@ -66,6 +66,14 @@ plan ─► branch ─► implement ─► make check ─► PR ─► AI review
 - `make check` = `ruff` + `pytest` + `guardrails`. The same gate runs in CI.
 - Failures are routed back to the agent as the feedback signal — the heart of self-correction.
 
+## Docs as part of the harness
+
+Documentation is treated as code (reviewed, owned, current). The taxonomy and index live in
+[docs/README.md](README.md): **decisions** → `adr/`, **proposals** → `rfc/`, **per-issue plans** →
+`plans/`, **operational procedures** → `runbooks/`, **guides/strategy** → `docs/*.md`, **state** →
+repo root. For non-trivial / `agent-task` issues, write a plan from
+[`plans/_TEMPLATE.md`](plans/_TEMPLATE.md) *before* implementing — it's the orchestrator-mode contract.
+
 ## Conductor vs. orchestrator
 
 - **Conductor** (real-time, in-editor): complex logic, debugging, unfamiliar code — you direct each change.

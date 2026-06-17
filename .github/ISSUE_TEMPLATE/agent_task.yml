@@ -32,3 +32,9 @@ body:
     attributes:
       label: Backlog ID / ADR
       placeholder: "BL-0x / ADR-00xx"
+  - type: input
+    id: plan
+    attributes:
+      label: Implementation plan
+      description: For non-trivial work, write one from docs/plans/_TEMPLATE.md and link it here.
+      placeholder: "docs/plans/<issue>-<slug>.md"
