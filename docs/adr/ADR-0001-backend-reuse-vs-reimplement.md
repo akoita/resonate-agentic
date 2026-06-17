@@ -176,7 +176,7 @@ cover them, or (b) keep them first-party and drop them from the agentic layer fo
        catalog/quote/purchase tools. (Staging is reachable — no need to run locally first.)
 2. [ ] Generate a typed Python client from `/openapi.json` for the 10 public read paths
        (storefront/catalog/stem-pricing/x402-info); delete the guessed paths they replace.
-3. [ ] Implement x402 proof generation for `stem.download` / `GET …/x402` — via the **agentcash MCP**
+3. [ ] Implement x402 proof generation for `stem.download` / `GET …/x402` — via an **in-app x402 client** (per-env wallet)
        (Base Sepolia + Circle USDC, facilitator x402.org) — and prove one live 0.05-USDC purchase.
 4. [ ] Fix the 7-stem-type assumption (`…, other, original`) in schemas/instructions.
 5. [ ] **ADR-0002 (scope + auth):** decide whether DJ/artist/community/analytics flows are in scope;

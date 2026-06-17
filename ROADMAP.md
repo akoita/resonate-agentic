@@ -19,7 +19,7 @@ Legend: ✅ done · 🔜 in progress / next · 🧭 planned · 🔒 blocked (nee
 |---|---|---|---|
 | 🔜 | Wire ADK `McpToolset` → `$RESONATE_API_BASE/mcp` (catalog/quote/purchase) | Real, supported agent commerce | BL-01 |
 | 🔜 | Generate typed client from `/openapi.json` for public read paths | Kill route drift | BL-02 |
-| 🔜 | x402 proof via agentcash MCP → one live 0.05-USDC purchase | Core value prop works | BL-03 |
+| 🔜 | x402 proof (in-app x402 client) → one live 0.05-USDC purchase (needs testnet wallet) | Core value prop works | BL-03 |
 | 🔜 | Budget guardrail as ADK `before_tool_callback` on purchases | Enforce, don't just instruct | BL-04 |
 
 ## 🧭 Next

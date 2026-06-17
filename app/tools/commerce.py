@@ -26,7 +26,7 @@ async def stem_purchase(
     to satisfy.
 
     NOTE: This tool forwards an ``X-PAYMENT`` proof but does NOT construct/sign one.
-    A real purchase requires a payment provider (e.g. the agentcash x402 client) to
+    A real purchase requires an x402 payment client (per-env wallet; see docs/plans/9-x402-proof.md) to
     produce ``payment_proof`` first. Without it, this returns the 402 challenge.
 
     Args:
