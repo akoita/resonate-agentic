@@ -40,7 +40,7 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
   fix is to *consume* those (ADR-0001), which also discounts #2 (x402 handled by MCP `stem.download`).
   Cheap and unblocks everything; do it first.
 - **#2 x402** — purchasing is the platform's core value prop. Without proof generation, the product
-  literally cannot transact. Recommend delegating to the connected **agentcash MCP** (handles
+  literally cannot transact. Recommend an in-app x402 client with a per-env wallet (Secret Manager/KMS), bound to the endpoint's network (handles
   x402 + SIWX) rather than hand-rolling wallet signing in-process.
 - **#3 CI** — hours of work that protects every later change; highest leverage-per-effort item.
 - **#4/#5/#6 deploy + observability + secrets** — the minimum to run safely on **Agent Runtime**
@@ -57,7 +57,7 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 - #1 Verify/fix backend routes + auth (do before touching anything else).
 - #3 Add CI (GitHub Actions or Cloud Build): `ruff` + `pytest` on every push. *Quick win, do now.*
 - #7 Make `validate_upload`/`parse_input` parse real input.
-- #2 x402 end-to-end via agentcash MCP; prove one discovery→quote→pay→receipt run.
+- #2 x402 end-to-end via an in-app x402 client (per-env wallet); prove one discovery→quote→pay→receipt run.
 - #8 Implement the 5 stub tools against real backend/chain (or formally descope them).
 - #10/#12/#14 mop-up (centralize pricing constants, pin `pyproject`, route `stem_purchase` through `_http`) — bundle into the PRs above.
 

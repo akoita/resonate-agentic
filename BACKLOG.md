@@ -10,7 +10,7 @@ sized for an agent task (one PR). `make check` must pass before any item is clos
 |----|------|---------|------|-------------------|
 | BL-01 | Replace catalog/quote/purchase tools with an ADK `McpToolset` on `$RESONATE_API_BASE/mcp` | now | commerce | ADR-0001 · catalog/commerce tests still green |
 | BL-02 | Generate a typed Python client from `/openapi.json`; wrap public read paths; delete guessed paths | now | infra | ADR-0001 · client regenerates via script |
-| BL-03 | x402 proof generation via agentcash MCP; prove one live 0.05-USDC `stem.download` | now | commerce | ADR-0001 · receipt asserted in a (gated) integration test |
+| BL-03 | x402 proof generation (in-app x402 client; per-env wallet via Secret Manager/KMS); one live 0.05-USDC `stem.download` (needs a Base-Sepolia testnet wallet) | now | commerce | ADR-0001 · receipt asserted in a (gated) integration test |
 | BL-04 | Budget enforcement as an ADK `before_tool_callback` on purchase tools | now | commerce | TECH_DEBT · denies over-budget purchase in a test |
 | BL-05 | Eval harness: trajectory + final-response evals per workflow, with rubrics; CI gate | next | eval | whitepaper "set the bar at the eval" · `make eval` runs |
 | BL-06 | Observability: Cloud Trace + structured logging behind config (portable) | next | infra | ADR-0003 · no-op locally, on in prod |

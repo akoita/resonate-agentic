@@ -71,8 +71,8 @@ rejects duplicate edges at construction.)
 `stem_purchase` forwards an `X-PAYMENT` header **if a proof is passed in**, but nothing in the
 codebase ever constructs or signs one. There is no wallet, no USDC handling, no x402 client.
 A purchase can therefore never complete — it can only ever return the `402` challenge.
-(Note: the environment has an **`agentcash` MCP server** that natively handles x402 + SIWX wallet
-proofs — a strong candidate to delegate payments to instead of hand-rolling.)
+(Fix: an **in-app x402 client** with a per-env wallet — testnet key (Secret Manager) for staging,
+Cloud KMS for prod — bound to the endpoint's network. See [docs/plans/9-x402-proof.md](docs/plans/9-x402-proof.md).)
 
 ### 🟠 Several tools are pure stubs (return fabricated success)
 `marketplace_list`, `stem_price`, `stem_mint`, `shows_campaign`, and the create/join/leave
@@ -126,7 +126,7 @@ Workload Identity / Secret Manager rather than a raw API key in `.env`.
 | **Model access**     | Gemini on the Agent Platform (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`); pin model + region; keep Flash for routing, consider Pro for the rights/selection LLM nodes. |
 | **Sessions/Memory**  | Managed **Agent Platform Sessions** (`VertexAiSessionService`) instead of `InMemoryRunner`; durable session + memory for multi-turn DJ/upload flows. |
 | **Secrets**          | Secret Manager + Workload Identity; remove API keys from `.env`. |
-| **Payments (x402)**  | Either integrate the `agentcash` MCP (handles x402+SIWX wallet proofs) or a dedicated payment microservice; never sign in the agent process without a managed key (Cloud KMS). |
+| **Payments (x402)**  | An in-app x402 client with a per-env wallet bound to the endpoint's network; key via Secret Manager (staging) / **Cloud KMS** (prod) — never an unmanaged key in-process. |
 | **Observability**    | Cloud Trace + structured logging; ADK's built-in tracing; prompt/response logging to BigQuery for analytics & eval. |
 | **CI/CD**            | Cloud Build (or GitHub Actions) → containerize → deploy to Agent Runtime/Cloud Run; gated on tests + eval pass. |
 | **Eval**             | ADK eval datasets per workflow (discovery→purchase, upload, DJ session) as a release gate. |
@@ -150,7 +150,7 @@ with `agents-cli` and port these agents into it**, rather than hand-build Docker
 ### Phase 1 — Make it real (1–2 weeks)
 5. Validate every backend route against akoita/resonate; fix paths; add auth headers.
 6. Implement the stub tools (`stem_price`, `stem_mint`, `marketplace_list`, `shows_campaign`, room create/join) against real backend/chain endpoints — or explicitly mark them mocked.
-7. Implement x402 end-to-end (recommend: delegate to `agentcash` MCP); prove one full discovery→quote→pay→receipt run.
+7. Implement x402 end-to-end (in-app x402 client + per-env wallet); prove one full discovery→quote→pay→receipt run.
 8. Add budget/spend guardrails as ADK callbacks (before-tool checks), not just instructions, so "never purchase without confirmation" is enforced in code.
 
 ### Phase 2 — Make it production on GCP (2–4 weeks)

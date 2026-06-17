@@ -33,7 +33,7 @@ Think of GCP's agentic offering as **8 layers**. You can adopt them incrementall
 | 2 | **Framework / SDK** | **ADK** (Agent Development Kit), LangGraph, LlamaIndex, CrewAI (all deployable) | Author agents, tools, workflows, callbacks | ✅ ADK 2.2 |
 | 3 | **Runtime / hosting** | **Agent Runtime** (formerly Vertex AI Agent Engine; managed), **Cloud Run** (serverless containers), **GKE** (full control) | Run the agent at scale, autoscaling, identity | Not deployed yet → **Agent Runtime** |
 | 4 | **Sessions & Memory** | **Agent Platform Sessions** + **Agent Platform Memory Bank** (managed); or Firestore/Cloud-SQL-backed services | Durable multi-turn state; long-term memory across sessions | Uses `InMemoryRunner` (ephemeral) → **managed sessions** |
-| 5 | **Tools & interop** | **MCP** (Model Context Protocol), **A2A** (Agent-to-Agent protocol), **Application Integration**, **API Hub**, RAG Engine / Agent Platform Search | Connect agents to APIs, data, and *other agents* | Custom HTTP tools; consider MCP for backend + agentcash for x402 |
+| 5 | **Tools & interop** | **MCP** (Model Context Protocol), **A2A** (Agent-to-Agent protocol), **Application Integration**, **API Hub**, RAG Engine / Agent Platform Search | Connect agents to APIs, data, and *other agents* | Custom HTTP tools; MCP for the backend + an in-app x402 client for payments |
 | 6 | **Governance & security** | **Model Armor** (prompt-injection / DLP filtering), IAM, **Secret Manager**, **Cloud KMS**, VPC-SC, Workload Identity | Guardrails, secrets, network isolation, least privilege | API key in `.env` → **Secret Manager + IAM** |
 | 7 | **Observability & quality** | **Cloud Trace**, Cloud Logging, **BigQuery** export, **Agent Platform evaluation** | Traces, prompt/response logs, eval scores, dashboards | None yet → **Trace + eval gate** |
 | 8 | **Discovery & distribution** | **Gemini Enterprise / Agentspace**, **Agent Garden / Agent Gallery**, agents-cli `publish` | Publish agents for employees/users to discover & use | N/A yet (post-deploy) |
@@ -107,7 +107,7 @@ Runtime, calling it as a tool/service. Don't conflate the two workloads.
 | `GOOGLE_API_KEY` + AI Studio | `GOOGLE_GENAI_USE_VERTEXAI=TRUE` + project/region; Gemini Flash for the router, **Pro** for the rights-evaluation & stem-selection `LlmAgent` nodes |
 | `InMemoryRunner` in `WorkflowAgent` | **Agent Platform Sessions**; **Memory Bank** for cross-session taste memory (great fit for the DJ) |
 | HTTP tools w/ no auth | Tools read `RESONATE_API_KEY` from **Secret Manager**; backend behind IAM/Identity-Aware Proxy |
-| x402 payment proof absent | Delegate to the **agentcash MCP** (x402 + SIWX wallet proofs) as a tool, or a dedicated payments service with keys in **Cloud KMS** |
+| x402 payment proof absent | An in-app **x402 client** with a per-env wallet (Secret Manager for staging, **Cloud KMS** for prod), bound to the endpoint's network |
 | No guardrails | **Model Armor** on inputs/outputs; budget/spend enforced as ADK `before_tool_callback` (code, not prompt) |
 | No tracing/eval | **Cloud Trace** (auto on Agent Runtime) + prompt/response logging to **BigQuery**; **Agent Platform evaluation** sets per workflow as a CI gate |
 | Not discoverable | Optionally **publish to Gemini Enterprise / Agentspace** via `agents-cli publish` |

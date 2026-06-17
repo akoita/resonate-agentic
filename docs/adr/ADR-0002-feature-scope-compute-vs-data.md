@@ -37,7 +37,7 @@ work it just creates a second source of truth that drifts.
 | Feature / agent | Nature | Approach | Auth | Works now |
 |---|---|---|---|---|
 | Catalog discovery | data (public) | Reuse MCP `catalog.search` / storefront | none | ✅ |
-| Commerce / purchase | data + payment (public) | Reuse MCP `stem.download` + x402 (agentcash) | x402 proof | ✅ |
+| Commerce / purchase | data + payment (public) | Reuse MCP `stem.download` + x402 (in-app x402 client) | x402 proof | ✅ |
 | **DJ / taste / recs** | **compute** | **Adapt agent-side** — LLM curation over public `catalog.search` + `stem.quote` | none | ✅ |
 | **Budget / spend caps** | **compute** | **Adapt agent-side** — ADK `before_tool` callbacks + session state on the agent wallet | none | ✅ |
 | Artist upload | data + assets + identity | Reuse `/ingestion` (Demucs/storage) | JWT | ⛔ |
