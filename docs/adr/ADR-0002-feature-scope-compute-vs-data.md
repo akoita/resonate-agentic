@@ -8,7 +8,7 @@
 ## Context
 
 ADR-0001 established: reuse the Resonate backend as system of record; its **public, auth-free
-agent contract** (verified live on `the staging backend`) is **discovery (storefront/
+agent contract** (verified live on the staging backend) is **discovery (storefront/
 catalog/pricing) + commerce (MCP + x402)**. The DJ, taste/recommendations, wallet/budget, artist
 upload, analytics, community, and shows endpoints are **JWT-gated and absent from the public
 contract**, with no public auth path.

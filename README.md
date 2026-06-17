@@ -75,9 +75,10 @@ flowchart TD
 The upstream backend ships an **explicit external-agent contract**, verified live on staging:
 
 ```bash
-curl $RESONATE_API_BASE/.well-known/mcp.json   # MCP: catalog.search, stem.quote, stem.download
-curl $RESONATE_API_BASE/openapi.json           # OpenAPI 3.1 (public read paths)
-curl $RESONATE_API_BASE/.well-known/x402       # x402 discovery (Base Sepolia · Circle USDC)
+# point RESONATE_API_BASE at your Resonate backend, then:
+curl "$RESONATE_API_BASE/.well-known/mcp.json"   # MCP: catalog.search, stem.quote, stem.download
+curl "$RESONATE_API_BASE/openapi.json"           # OpenAPI 3.1 (public read paths)
+curl "$RESONATE_API_BASE/.well-known/x402"       # x402 discovery (Base Sepolia · Circle USDC)
 ```
 
 ## 🚀 Quickstart
@@ -109,7 +110,7 @@ pytest -q       # tests (backend + LLM are mocked — no creds needed)
 
 | Variable | Purpose |
 |----------|---------|
-| `RESONATE_API_BASE` | Backend base URL (e.g. `$RESONATE_API_BASE`) |
+| `RESONATE_API_BASE` | Resonate backend base URL (e.g. `http://localhost:3000`) |
 | `RESONATE_API_KEY` | Backend bearer token (optional) |
 | `GOOGLE_API_KEY` | Gemini via AI Studio (local dev) |
 | `GOOGLE_GENAI_USE_VERTEXAI` · `GOOGLE_CLOUD_PROJECT` · `GOOGLE_CLOUD_LOCATION` | Gemini via the Gemini Enterprise Agent Platform (production) |

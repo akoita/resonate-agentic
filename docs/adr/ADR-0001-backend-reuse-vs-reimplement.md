@@ -41,7 +41,7 @@ system of record; it changes independently of this repo; and it was designed to 
 agents — but it also already has an *internal* orchestrator, so we must avoid building a second,
 competing "brain."
 
-## Live verification (the staging backend, 2026-06-17)
+## Live verification (staging backend, 2026-06-17)
 
 Interrogated the deployed staging backend (read-only). It confirms the source analysis **and
 sharpens the contract boundary**:
