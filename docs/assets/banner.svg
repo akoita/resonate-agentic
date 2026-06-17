@@ -61,8 +61,8 @@
       <text x="819" y="266" fill="#d7b4ff" text-anchor="middle">MCP · OpenAPI</text>
     </g>
     <g>
-      <rect x="906" y="244" width="132" height="34" rx="17" fill="#0e1626" stroke="#34d399" stroke-opacity="0.5"/>
-      <text x="972" y="266" fill="#86efc4" text-anchor="middle">built for GCP</text>
+      <rect x="906" y="244" width="132" height="34" rx="17" fill="#0e1626" stroke="#fbbf24" stroke-opacity="0.5"/>
+      <text x="972" y="266" fill="#fde68a" text-anchor="middle">runs anywhere</text>
     </g>
   </g>
 
