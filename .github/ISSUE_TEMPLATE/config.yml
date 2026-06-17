@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 Security vulnerability
+    url: https://github.com/akoita/resonate-agentic/security/advisories/new
+    about: Please report security issues privately, not as public issues (see SECURITY.md).
+  - name: 📋 Roadmap & backlog
+    url: https://github.com/akoita/resonate-agentic/blob/main/ROADMAP.md
+    about: See what's planned before filing a duplicate.

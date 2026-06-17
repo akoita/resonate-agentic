@@ -1,0 +1,25 @@
+name: "✨ Feature / proposal"
+description: Propose a capability or change.
+title: "[feat] "
+labels: ["next"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / opportunity
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: If it's a significant decision, it likely needs an ADR — note that here.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Contract scope
+      description: Does this stay on the public agent contract, or need JWT/auth? (see ADR-0002)
+      options:
+        - "Public contract (no auth)"
+        - "Needs JWT / agent auth (blocked on ADR-0004)"
+        - "Unsure"

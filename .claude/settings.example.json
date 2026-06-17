@@ -1,0 +1,31 @@
+{
+  "//": "OPT-IN. Copy to .claude/settings.json to enable. Adds (1) an allow-list so common, safe project commands don't prompt, and (2) a PostToolUse hook that runs the harness guardrails after edits. Review before enabling — it modifies how Claude Code behaves in this repo.",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(make:*)",
+      "Bash(python scripts/harness_guardrails.py)",
+      "Bash(ruff:*)",
+      "Bash(python -m ruff:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/harness_guardrails.py >/dev/null 2>&1 || python scripts/harness_guardrails.py 1>&2"
+          }
+        ]
+      }
+    ]
+  }
+}

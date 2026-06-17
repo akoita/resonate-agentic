@@ -2,6 +2,9 @@
 
 Thanks for your interest! This is an **experimental** project — issues, ideas, and PRs are welcome.
 
+> The agent/contributor rules of the road live in **[AGENTS.md](AGENTS.md)** (the harness) and
+> **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)**. Pick work from **[BACKLOG.md](BACKLOG.md)**.
+
 ## Development setup
 
 ```bash

@@ -161,10 +161,20 @@ docs/
 
 This is an early prototype with an honest paper trail:
 
-- **[STATUS.md](STATUS.md)** — production-readiness assessment & phased roadmap
-- **[TECH_DEBT.md](TECH_DEBT.md)** — prioritized debt register
+- **[ROADMAP.md](ROADMAP.md)** — Now / Next / Later · **[BACKLOG.md](BACKLOG.md)** — actionable items
+- **[STATUS.md](STATUS.md)** — production-readiness assessment · **[TECH_DEBT.md](TECH_DEBT.md)** — debt register
 - **[docs/adr/](docs/adr/)** — architecture decisions (backend reuse, feature scope, **portability**)
-- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP agentic stack & Agent Runtime vs Cloud Run (priority target)
+- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP stack & Agent Runtime vs Cloud Run (priority target)
+
+## 🛠️ Agentic development
+
+This repo is set up for **agentic engineering**, not ad-hoc vibe coding — an engineered *harness*
+around the model (instructions, skills, tools, guardrails, evals, CI):
+
+- **[AGENTS.md](AGENTS.md)** — the harness rules (static context; `CLAUDE.md`/`GEMINI.md` point here)
+- **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)** — how the harness maps to the SDLC (the factory model)
+- **[.claude/skills/](.claude/skills/)** — on-demand skills · **[scripts/harness_guardrails.py](scripts/harness_guardrails.py)** — deterministic guardrails
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** · **[SECURITY.md](SECURITY.md)** · `make check` = lint + test + guardrails
 
 ## 🙏 Acknowledgements
 
