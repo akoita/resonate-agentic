@@ -41,6 +41,36 @@ system of record; it changes independently of this repo; and it was designed to 
 agents — but it also already has an *internal* orchestrator, so we must avoid building a second,
 competing "brain."
 
+## Live verification (the staging backend, 2026-06-17)
+
+Interrogated the deployed staging backend (read-only). It confirms the source analysis **and
+sharpens the contract boundary**:
+
+- **MCP** live at `POST /mcp` (streamable-http, protocol `2025-11-25`), discovery at
+  `/.well-known/mcp.json` — exactly 3 tools: `catalog.search` (auth none/free), `stem.quote`
+  (none/free), `stem.download` (`x402-tool-proof`/paid).
+- **x402** live: `/.well-known/x402` + `/api/x402/public-config` → network `eip155:84532`
+  (Base Sepolia), **Circle USDC** `0x036cbd…`, facilitator `https://x402.org/facilitator`. A real
+  `GET /api/stems/{id}/x402` with no payment returns **HTTP 402** + a `payment-required` header
+  carrying a base64 x402-v2 challenge (`scheme: exact`, `amount: "50000"` = 0.05 USDC @ 6 dp,
+  `payTo` = the public payout address). The well-known explicitly states *"the generic payment
+  router is an internal backend boundary"* — matching the responsibility split below.
+- **OpenAPI** (`/openapi.json`, 3.1.0) publishes **only 10 public read paths** — storefront,
+  catalog, stem-pricing, and the two x402 endpoints — with **empty `securitySchemes`**.
+- **The JWT features are NOT in the external contract.** `GET /recommendations/{id}`,
+  `/community/cohorts/suggestions`, `/sessions/playlist`, `/agents/config/history`, `/wallet/{id}`
+  all return **401** live, and there is **no public auth endpoint** (`/auth/login`, `/auth/token`,
+  `/.well-known/openid-configuration` → 404). So there's no documented way for an external agent to
+  obtain a JWT today.
+- Minor data note: live stems expose **7 stem types** (`vocals, drums, bass, guitar, piano, other,
+  original`) — our code/docs assume 6 (missing `original`).
+
+**Consequence for scope:** the backend's *blessed external-agent surface* is precisely
+**discovery (storefront/catalog/pricing) + commerce (MCP + x402)** — no auth required. The DJ,
+recommendations, wallet/budget, artist-upload, analytics, community, and shows flows sit behind
+JWT with no public auth path, i.e. they are **first-party app APIs, not (yet) part of the agent
+contract.**
+
 ## Decision
 
 **Reuse the backend as the system of record. Do NOT reimplement any domain logic in the agentic
@@ -131,15 +161,26 @@ as the **conversational, cross-domain orchestrator**. This prevents two orchestr
 - **Revisit when:** the MCP tool catalog grows (more flows could move from REST→MCP); or if the
   backend's agent runtime is later exposed for external orchestration (would shrink our workflow code).
 
+## Scope decision raised by live verification
+
+Because the JWT flows aren't in the agent contract, **scope the agentic MVP to the blessed public
+loop: discover → quote → pay → download** (catalog_agent + commerce_agent on MCP + x402 + storefront,
+zero auth). The DJ / artist-upload / community / analytics agents are **blocked on a decision by the
+backend owner** (you): either (a) extend the public/MCP contract (and add an agent auth path) to
+cover them, or (b) keep them first-party and drop them from the agentic layer for now. Track as
+**ADR-0002**.
+
 ## Action Items
 
-1. [ ] Spin up the backend locally (`docker/`, port 3000); fetch `/openapi.json` and `/.well-known/mcp.json`.
-2. [ ] Replace catalog/quote/purchase tools with an ADK `McpToolset` pointed at `POST /mcp`.
-3. [ ] Generate a typed Python client from `/openapi.json`; wrap session/recommendation/analytics/
-       ingestion/community/shows/wallet calls over it (delete guessed paths).
-4. [ ] Fix the confirmed-wrong calls: wallet (`GET /wallet/{userId}` / `POST /wallet/budget`),
-       upload (`POST /ingestion/upload`, multipart).
-5. [ ] Add JWT auth handling for protected endpoints (token source + refresh) — spin out as ADR-0002.
-6. [ ] Repoint the DJ flow at `POST /sessions/agent/next`; remove any client-side re-scoring.
-7. [ ] Update TECH_DEBT.md #1 (now "adopt MCP + OpenAPI client + JWT," lower long-term cost).
-8. [ ] Read `docs/architecture/external_agent_application_contract.md` upstream and align to it.
+1. [ ] Point an ADK `McpToolset` at `$RESONATE_API_BASE/mcp`; replace the
+       catalog/quote/purchase tools. (Staging is reachable — no need to run locally first.)
+2. [ ] Generate a typed Python client from `/openapi.json` for the 10 public read paths
+       (storefront/catalog/stem-pricing/x402-info); delete the guessed paths they replace.
+3. [ ] Implement x402 proof generation for `stem.download` / `GET …/x402` — via the **agentcash MCP**
+       (Base Sepolia + Circle USDC, facilitator x402.org) — and prove one live 0.05-USDC purchase.
+4. [ ] Fix the 7-stem-type assumption (`…, other, original`) in schemas/instructions.
+5. [ ] **ADR-0002 (scope + auth):** decide whether DJ/artist/community/analytics flows are in scope;
+       if yes, get an agent auth path (none exists publicly today) before building them.
+6. [ ] Defer DJ/artist/community tools until #5 is resolved; mark them clearly as first-party-gated.
+7. [ ] Update TECH_DEBT.md #1 to reflect MVP-scoping + MCP/OpenAPI reuse (done).
+8. [ ] Read upstream `docs/architecture/external_agent_application_contract.md` and align.
