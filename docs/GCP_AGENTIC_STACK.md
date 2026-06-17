@@ -3,6 +3,11 @@
 A practical map of Google Cloud's **professional agentic platform**, written to (a) teach the
 full stack and (b) decide where *this* project (Resonate Agentic, ADK 2.0) should run.
 
+> 🌐 **Priority, not lock-in.** Gemini Enterprise is this project's *priority* deployment target,
+> and this doc is its deep-dive. The agent is deliberately portable (open-source ADK, swappable
+> models, open A2A/MCP standards) and also runs on Cloud Run, GKE, other clouds, or locally — see
+> [ADR-0003](adr/ADR-0003-runtime-and-model-portability.md).
+
 > 🔄 **Naming (2026 rebrand).** At Google Cloud Next 2026, **Vertex AI** was folded into the
 > **Gemini Enterprise Agent Platform** (effective ~May 21, 2026). Key renames used throughout this
 > doc: **Vertex AI Agent Engine → Agent Runtime**, **Agent Engine Sessions → Agent Platform

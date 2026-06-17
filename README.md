@@ -10,7 +10,8 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](pyproject.toml)
 [![Google ADK](https://img.shields.io/badge/Google%20ADK-2.2-4285F4.svg?logo=google&logoColor=white)](https://google.github.io/adk-docs/)
 [![Tests](https://img.shields.io/badge/tests-10%20passing-brightgreen.svg)](tests/)
-[![Built for GCP](https://img.shields.io/badge/built%20for-Agent%20Runtime%20(Gemini%20Enterprise)-34A853.svg?logo=googlecloud&logoColor=white)](docs/GCP_AGENTIC_STACK.md)
+[![Runtime](https://img.shields.io/badge/runtime-portable%20(Agent%20Runtime%20·%20Cloud%20Run%20·%20self--host)-4285F4.svg)](docs/GCP_AGENTIC_STACK.md)
+[![Models](https://img.shields.io/badge/models-Gemini%20or%20any%20LLM%20(LiteLLM)-7c3aed.svg)](#configuration)
 [![Status](https://img.shields.io/badge/status-experimental-orange.svg)](STATUS.md)
 
 </div>
@@ -29,7 +30,7 @@ Resonate turns music stems into **programmable IP**: artists publish 6-way separ
 - 🎚️ five **specialist agents** — catalog, DJ, commerce, artist, community,
 - 🔀 three **workflow graphs** — discovery→purchase, artist upload, DJ session,
 - 💳 native **x402 / USDC** commerce and **MCP + OpenAPI** integration,
-- ☁️ designed to run on **Agent Runtime** (Gemini Enterprise Agent Platform, formerly Vertex AI Agent Engine).
+- ☁️ **runtime- and model-portable** — priority target is **Agent Runtime** (Gemini Enterprise), but it runs on Cloud Run, GKE, or any host that runs Python; the LLM is swappable.
 
 It is deliberately a *thin orchestration layer*: the heavy lifting (payments, on-chain rights, ML stem-separation, recommendation scoring) is **reused** from the production backend, never reimplemented — see [ADR-0001](docs/adr/ADR-0001-backend-reuse-vs-reimplement.md).
 
@@ -41,7 +42,7 @@ It is deliberately a *thin orchestration layer*: the heavy lifting (payments, on
 | **Reuse, don't reimplement** | Consumes the backend's purpose-built agent contract — an **MCP server** (`catalog.search`, `stem.quote`, `stem.download`) + **OpenAPI** spec — verified live against staging. |
 | **Compute-vs-data architecture** | Compute-bound features (the AI DJ, budget guardrails) run agent-side on public data; data-bound features reuse the backend ([ADR-0002](docs/adr/ADR-0002-feature-scope-compute-vs-data.md)). |
 | **Graph workflows** | Deterministic ADK `Workflow` graphs with conditional routing, shared state, and agent-side budget enforcement. |
-| **GCP-first** | A full [GCP agentic-stack guide](docs/GCP_AGENTIC_STACK.md): Agent Runtime vs Cloud Run, sessions/memory, Model Armor, eval, observability. |
+| **Portable by design** | No lock-in: built on open-source ADK, open standards (A2A/MCP), and a swappable model layer. **Gemini Enterprise is the priority target, not a requirement** — see [Portability](#-portability) and the [GCP guide](docs/GCP_AGENTIC_STACK.md). |
 
 ## 🏗️ Architecture
 
@@ -81,6 +82,21 @@ curl "$RESONATE_API_BASE/openapi.json"           # OpenAPI 3.1 (public read path
 curl "$RESONATE_API_BASE/.well-known/x402"       # x402 discovery (Base Sepolia · Circle USDC)
 ```
 
+## 🌐 Portability
+
+**Gemini Enterprise (Agent Runtime) is the priority deployment target — not a hard dependency.**
+Nothing here locks you to GCP:
+
+| Layer | Portable because… |
+|-------|-------------------|
+| **Framework** | [ADK](https://google.github.io/adk-docs/) is open-source (Apache-2.0) — plain Python you can run anywhere. |
+| **Runtime** | Run on **Agent Runtime** (managed), **Cloud Run** / **GKE**, another cloud's container service, or locally (`adk run` / `adk web`). |
+| **Models** | `AGENT_MODEL` is swappable — Gemini via AI Studio *or* Gemini Enterprise, or **any LLM** (OpenAI, Anthropic, local) through ADK's LiteLLM integration. |
+| **Interop** | Speaks the open **MCP** and **A2A** standards, so it plugs into non-Google agentic ecosystems. |
+| **Backend** | Consumed over an open contract (MCP · OpenAPI · x402), independent of where the agent runs. |
+
+[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md) is the deep-dive for the *priority* GCP target; the same agent deploys elsewhere with a different runtime + model config. See [ADR-0003](docs/adr/ADR-0003-runtime-and-model-portability.md).
+
 ## 🚀 Quickstart
 
 Requires Python 3.11+.
@@ -114,7 +130,7 @@ pytest -q       # tests (backend + LLM are mocked — no creds needed)
 | `RESONATE_API_KEY` | Backend bearer token (optional) |
 | `GOOGLE_API_KEY` | Gemini via AI Studio (local dev) |
 | `GOOGLE_GENAI_USE_VERTEXAI` · `GOOGLE_CLOUD_PROJECT` · `GOOGLE_CLOUD_LOCATION` | Gemini via the Gemini Enterprise Agent Platform (production) |
-| `AGENT_MODEL` | Model id (default `gemini-2.5-flash`) |
+| `AGENT_MODEL` | Model id (default `gemini-2.5-flash`); any LLM via ADK's LiteLLM integration |
 
 ## 🧪 Testing
 
@@ -147,8 +163,8 @@ This is an early prototype with an honest paper trail:
 
 - **[STATUS.md](STATUS.md)** — production-readiness assessment & phased roadmap
 - **[TECH_DEBT.md](TECH_DEBT.md)** — prioritized debt register
-- **[docs/adr/](docs/adr/)** — architecture decisions (backend reuse, feature scope)
-- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP agentic stack & Agent Runtime vs Cloud Run
+- **[docs/adr/](docs/adr/)** — architecture decisions (backend reuse, feature scope, **portability**)
+- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP agentic stack & Agent Runtime vs Cloud Run (priority target)
 
 ## 🙏 Acknowledgements
 
@@ -162,4 +178,4 @@ This is an early prototype with an honest paper trail:
 
 ---
 
-<div align="center"><sub>Built with Google ADK 2.0 · designed for Agent Runtime on the Gemini Enterprise Agent Platform</sub></div>
+<div align="center"><sub>Built with Google ADK 2.0 · portable across agentic runtimes · priority target: Gemini Enterprise Agent Runtime</sub></div>
