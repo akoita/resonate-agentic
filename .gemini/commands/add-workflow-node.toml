@@ -1,0 +1,12 @@
+# Gemini CLI command — mirrors the canonical skill in .agents/skills (single source of truth).
+description = "Add/modify an ADK Workflow node (real Event route/state contract, LlmAgent)."
+
+prompt = """
+Follow this project skill exactly when working on the request below.
+
+@{.agents/skills/add-workflow-node/SKILL.md}
+
+Also honor the repo rules in @{AGENTS.md}.
+
+Task: {{args}}
+"""

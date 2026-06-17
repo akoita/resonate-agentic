@@ -1,0 +1,13 @@
+# Gemini CLI command — run the pre-PR gate and fix any failures.
+description = "Run `make check` (lint + tests + guardrails) and fix any failures."
+
+prompt = """
+Here is the output of the project's pre-PR gate:
+
+```
+!{make check}
+```
+
+If anything failed, diagnose and fix it per @{AGENTS.md}, then re-run `make check`.
+If it all passed, say so and stop.
+"""

@@ -169,12 +169,13 @@ This is an early prototype with an honest paper trail:
 ## 🛠️ Agentic development
 
 This repo is set up for **agentic engineering**, not ad-hoc vibe coding — an engineered *harness*
-around the model (instructions, skills, tools, guardrails, evals, CI):
+around the model (instructions, skills, tools, guardrails, evals, CI). It is **vendor-neutral**:
+the same harness drives **Claude Code, OpenAI Codex, and Gemini CLI** from one source.
 
-- **[AGENTS.md](AGENTS.md)** — the harness rules (static context; `CLAUDE.md`/`GEMINI.md` point here)
-- **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)** — how the harness maps to the SDLC (the factory model)
-- **[.claude/skills/](.claude/skills/)** — on-demand skills · **[scripts/harness_guardrails.py](scripts/harness_guardrails.py)** — deterministic guardrails
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** · **[SECURITY.md](SECURITY.md)** · `make check` = lint + test + guardrails
+- **[AGENTS.md](AGENTS.md)** — the harness rules (open standard; `CLAUDE.md`/`GEMINI.md` symlink to it)
+- **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)** — the SDLC mapping + the **Multi-tool harness** table
+- **[.agents/skills/](.agents/skills/)** — canonical `SKILL.md` skills (Claude via `.claude/skills`, Codex native, Gemini via [`.gemini/commands/`](.gemini/commands/))
+- **[scripts/harness_guardrails.py](scripts/harness_guardrails.py)** — deterministic guardrails · **[CONTRIBUTING.md](CONTRIBUTING.md)** · **[SECURITY.md](SECURITY.md)** · `make check`
 
 ## 🙏 Acknowledgements
 

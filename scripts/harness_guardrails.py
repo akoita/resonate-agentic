@@ -31,9 +31,13 @@ def tracked_files() -> list[Path]:
 
 @lru_cache(maxsize=None)
 def read(p: Path) -> str:
+    # tracked entries can include symlinks (e.g. .claude/skills → .agents/skills);
+    # skip anything that isn't a real text file.
     try:
+        if p.is_symlink() or p.is_dir():
+            return ""
         return p.read_text(encoding="utf-8")
-    except (UnicodeDecodeError, FileNotFoundError):
+    except (UnicodeDecodeError, FileNotFoundError, OSError):
         return ""
 
 
