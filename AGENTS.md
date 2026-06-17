@@ -27,6 +27,7 @@ Tests: `pytest` + `pytest-asyncio` + `respx` (backend mocked). Lint: `ruff`.
 6. **Branch + PR only.** Never commit to `main`. End AI-authored commits with the `Co-Authored-By` trailer.
 7. **No silent partial features.** A tool that doesn't really do the work must self-flag `"stub": True` in its output.
 8. **Tests + evals are the contract.** Change behavior → add/adjust a test. Prefer writing the test before the code.
+9. **No cloud creds / infra here.** Deployment, Terraform, IAM, and secrets live in the private [`resonate-agentic-iac`](https://github.com/akoita/resonate-agentic-iac) repo. This repo only builds an image and emits deploy *intent*. → [ADR-0005](docs/adr/ADR-0005-deployment-iac-repo-separation.md)
 
 ## Workflow (the loop)
 

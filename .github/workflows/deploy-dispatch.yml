@@ -1,0 +1,52 @@
+name: Deploy Dispatch
+
+# Sends a deploy *intent* to the private IaC repo (akoita/resonate-agentic-iac) per ADR-0005 +
+# its cross-repo-deploy-contract. This repo holds NO cloud credentials — only a repo-scoped
+# dispatch token. No-ops without IAC_DISPATCH_TOKEN.
+#
+# Scaffold: manual (workflow_dispatch) for now. Auto-send on `main` + the image build land with BL-08.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment (prod is manual-only in the IaC repo)
+        type: choice
+        options: [dev, staging]
+        required: true
+      target:
+        description: Deploy target
+        type: choice
+        options: [agent-runtime, cloud-run]
+        default: agent-runtime
+      agent_image:
+        description: Prebuilt agent image ref (registry/agent:<sha>)
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    env:
+      HAVE_TOKEN: ${{ secrets.IAC_DISPATCH_TOKEN != '' }}
+    steps:
+      - name: Send deploy intent
+        if: env.HAVE_TOKEN == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.IAC_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/akoita/resonate-agentic-iac/dispatches \
+            -f event_type=resonate_agentic_deploy \
+            -F client_payload[environment]='${{ inputs.environment }}' \
+            -F client_payload[target]='${{ inputs.target }}' \
+            -F client_payload[agent_image]='${{ inputs.agent_image }}' \
+            -F client_payload[release_sha]='${{ github.sha }}' \
+            -F client_payload[trigger_branch]='${{ github.ref_name }}'
+          echo "Sent resonate_agentic_deploy → resonate-agentic-iac (${{ inputs.environment }})."
+
+      - name: Skipped (no token)
+        if: env.HAVE_TOKEN != 'true'
+        run: echo "IAC_DISPATCH_TOKEN not set — add it (repo-scoped, NOT a cloud cred) to enable cross-repo deploy intent."

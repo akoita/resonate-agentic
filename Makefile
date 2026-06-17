@@ -38,8 +38,9 @@ web: ## Run the ADK browser playground
 eval: ## Run agent evals (see .claude/skills/eval-and-deploy)
 	@echo "Eval harness not yet wired — see ROADMAP.md (Phase 2) and the eval-and-deploy skill."
 
-deploy: ## Deploy to the priority target (Agent Runtime) — see eval-and-deploy skill
-	@echo "Deploy not yet wired — see docs/GCP_AGENTIC_STACK.md and ADR-0003 (portable targets)."
+deploy: ## Deploy intent → private IaC repo (ADR-0005); cloud CD lives in resonate-agentic-iac
+	@echo "Deployment is owned by the private control plane: akoita/resonate-agentic-iac (ADR-0005)."
+	@echo "Trigger via the 'Deploy Dispatch' workflow (sends repository_dispatch); prod is manual-only."
 
 clean: ## Remove caches
 	rm -rf .pytest_cache .ruff_cache
