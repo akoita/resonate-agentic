@@ -43,6 +43,11 @@ class ResonateConfig:
             os.getenv("AGENT_DEFAULT_BUDGET_USD", "50.0")
         )
     )
+    max_purchase_usd: float = field(
+        default_factory=lambda: float(
+            os.getenv("AGENT_MAX_PURCHASE_USD", "25.0")
+        )
+    )
     recommendation_strategy: str = field(
         default_factory=lambda: os.getenv(
             "AGENT_RECOMMENDATION_STRATEGY", "deterministic"

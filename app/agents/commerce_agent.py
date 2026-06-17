@@ -3,6 +3,7 @@
 from google.adk.agents import Agent
 
 from app.config import config
+from app.guardrails import budget_after_tool, budget_before_tool
 from app.tools.catalog import stem_info
 from app.tools.commerce import budget_check, marketplace_list
 from app.tools.mcp import commerce_toolset
@@ -38,4 +39,7 @@ Your capabilities:
 - If budget is insufficient, suggest a cheaper license tier
 - Settlement is in USDC on Base (Sepolia for testnet)""",
     tools=[commerce_toolset(), marketplace_list, budget_check, stem_info],
+    # Budget enforced in code (not prompt): blocks over-budget/over-cap purchases.
+    before_tool_callback=budget_before_tool,
+    after_tool_callback=budget_after_tool,
 )
