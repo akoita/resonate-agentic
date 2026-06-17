@@ -5,7 +5,7 @@ _Assessment date: 2026-06-17 · ADK installed: `google-adk` 2.2.0 · Python 3.13
 This is an **experimental agentic-first reimplementation** of [akoita/resonate](https://github.com/akoita/resonate)
 using Google's Agent Development Kit (ADK) 2.0. This document is the first honest status
 of where it stands and what it takes to reach a production deployment on GCP's professional
-agentic platform (Vertex AI Agent Engine / Cloud Run + ADK).
+agentic platform (Agent Runtime / Cloud Run + ADK).
 
 ---
 
@@ -122,13 +122,13 @@ Workload Identity / Secret Manager rather than a raw API key in `.env`.
 
 | Concern              | Recommendation |
 |----------------------|----------------|
-| **Agent runtime**    | **Vertex AI Agent Engine** (managed ADK runtime, sessions, scaling) — primary target. Cloud Run as the portable/cheaper fallback. |
-| **Model access**     | Vertex AI Gemini (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`); pin model + region; keep Flash for routing, consider Pro for the rights/selection LLM nodes. |
-| **Sessions/Memory**  | Managed `VertexAiSessionService` (Agent Engine) instead of `InMemoryRunner`; durable session + memory for multi-turn DJ/upload flows. |
+| **Agent runtime**    | **Agent Runtime** (formerly Vertex AI Agent Engine; managed ADK runtime, sessions, scaling) — primary target. Cloud Run as the portable/cheaper fallback. |
+| **Model access**     | Gemini on the Agent Platform (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`); pin model + region; keep Flash for routing, consider Pro for the rights/selection LLM nodes. |
+| **Sessions/Memory**  | Managed **Agent Platform Sessions** (`VertexAiSessionService`) instead of `InMemoryRunner`; durable session + memory for multi-turn DJ/upload flows. |
 | **Secrets**          | Secret Manager + Workload Identity; remove API keys from `.env`. |
 | **Payments (x402)**  | Either integrate the `agentcash` MCP (handles x402+SIWX wallet proofs) or a dedicated payment microservice; never sign in the agent process without a managed key (Cloud KMS). |
 | **Observability**    | Cloud Trace + structured logging; ADK's built-in tracing; prompt/response logging to BigQuery for analytics & eval. |
-| **CI/CD**            | Cloud Build (or GitHub Actions) → containerize → deploy to Agent Engine/Cloud Run; gated on tests + eval pass. |
+| **CI/CD**            | Cloud Build (or GitHub Actions) → containerize → deploy to Agent Runtime/Cloud Run; gated on tests + eval pass. |
 | **Eval**             | ADK eval datasets per workflow (discovery→purchase, upload, DJ session) as a release gate. |
 
 The installed ADK + the `google-agents-cli-*` skills (scaffold / deploy / eval / observability /
@@ -154,8 +154,8 @@ with `agents-cli` and port these agents into it**, rather than hand-build Docker
 8. Add budget/spend guardrails as ADK callbacks (before-tool checks), not just instructions, so "never purchase without confirmation" is enforced in code.
 
 ### Phase 2 — Make it production on GCP (2–4 weeks)
-9. Switch to Vertex AI backend + managed Session/Memory service; remove `InMemoryRunner` from `WorkflowAgent`.
-10. Containerize and deploy to **Agent Engine** (use `google-agents-cli-deploy`); secrets via Secret Manager + Workload Identity.
+9. Switch to the Agent Platform model backend + managed Sessions/Memory service; remove `InMemoryRunner` from `WorkflowAgent`.
+10. Containerize and deploy to **Agent Runtime** (use `google-agents-cli-deploy`); secrets via Secret Manager + Workload Identity.
 11. Wire Cloud Trace + BigQuery logging (`google-agents-cli-observability`).
 12. Build ADK eval sets and gate CI/CD on them (`google-agents-cli-eval`); Cloud Build pipeline.
 13. Load/latency test the LLM router (8 sub-agents → routing cost); add caching where possible.

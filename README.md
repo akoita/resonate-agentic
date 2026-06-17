@@ -10,7 +10,7 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](pyproject.toml)
 [![Google ADK](https://img.shields.io/badge/Google%20ADK-2.2-4285F4.svg?logo=google&logoColor=white)](https://google.github.io/adk-docs/)
 [![Tests](https://img.shields.io/badge/tests-10%20passing-brightgreen.svg)](tests/)
-[![Built for GCP](https://img.shields.io/badge/built%20for-Vertex%20AI%20Agent%20Engine-34A853.svg?logo=googlecloud&logoColor=white)](docs/GCP_AGENTIC_STACK.md)
+[![Built for GCP](https://img.shields.io/badge/built%20for-Agent%20Runtime%20(Gemini%20Enterprise)-34A853.svg?logo=googlecloud&logoColor=white)](docs/GCP_AGENTIC_STACK.md)
 [![Status](https://img.shields.io/badge/status-experimental-orange.svg)](STATUS.md)
 
 </div>
@@ -29,7 +29,7 @@ Resonate turns music stems into **programmable IP**: artists publish 6-way separ
 - 🎚️ five **specialist agents** — catalog, DJ, commerce, artist, community,
 - 🔀 three **workflow graphs** — discovery→purchase, artist upload, DJ session,
 - 💳 native **x402 / USDC** commerce and **MCP + OpenAPI** integration,
-- ☁️ designed to run on **Vertex AI Agent Engine**.
+- ☁️ designed to run on **Agent Runtime** (Gemini Enterprise Agent Platform, formerly Vertex AI Agent Engine).
 
 It is deliberately a *thin orchestration layer*: the heavy lifting (payments, on-chain rights, ML stem-separation, recommendation scoring) is **reused** from the production backend, never reimplemented — see [ADR-0001](docs/adr/ADR-0001-backend-reuse-vs-reimplement.md).
 
@@ -41,7 +41,7 @@ It is deliberately a *thin orchestration layer*: the heavy lifting (payments, on
 | **Reuse, don't reimplement** | Consumes the backend's purpose-built agent contract — an **MCP server** (`catalog.search`, `stem.quote`, `stem.download`) + **OpenAPI** spec — verified live against staging. |
 | **Compute-vs-data architecture** | Compute-bound features (the AI DJ, budget guardrails) run agent-side on public data; data-bound features reuse the backend ([ADR-0002](docs/adr/ADR-0002-feature-scope-compute-vs-data.md)). |
 | **Graph workflows** | Deterministic ADK `Workflow` graphs with conditional routing, shared state, and agent-side budget enforcement. |
-| **GCP-first** | A full [GCP agentic-stack guide](docs/GCP_AGENTIC_STACK.md): Agent Engine vs Cloud Run, sessions/memory, Model Armor, eval, observability. |
+| **GCP-first** | A full [GCP agentic-stack guide](docs/GCP_AGENTIC_STACK.md): Agent Runtime vs Cloud Run, sessions/memory, Model Armor, eval, observability. |
 
 ## 🏗️ Architecture
 
@@ -112,7 +112,7 @@ pytest -q       # tests (backend + LLM are mocked — no creds needed)
 | `RESONATE_API_BASE` | Backend base URL (e.g. `$RESONATE_API_BASE`) |
 | `RESONATE_API_KEY` | Backend bearer token (optional) |
 | `GOOGLE_API_KEY` | Gemini via AI Studio (local dev) |
-| `GOOGLE_GENAI_USE_VERTEXAI` · `GOOGLE_CLOUD_PROJECT` · `GOOGLE_CLOUD_LOCATION` | Gemini via Vertex AI (production) |
+| `GOOGLE_GENAI_USE_VERTEXAI` · `GOOGLE_CLOUD_PROJECT` · `GOOGLE_CLOUD_LOCATION` | Gemini via the Gemini Enterprise Agent Platform (production) |
 | `AGENT_MODEL` | Model id (default `gemini-2.5-flash`) |
 
 ## 🧪 Testing
@@ -129,7 +129,7 @@ The suite proves the runtime contract without credentials: async tools run insid
 ```
 app/
   agent.py            root orchestrator (LLM router) + sub-agents
-  config.py           env-driven config (AI Studio or Vertex AI)
+  config.py           env-driven config (AI Studio or Gemini Enterprise Agent Platform)
   schemas.py          Pydantic domain models
   agents/             catalog · dj · commerce · artist · community
   tools/              async backend tools (+ _http.py shared client)
@@ -147,7 +147,7 @@ This is an early prototype with an honest paper trail:
 - **[STATUS.md](STATUS.md)** — production-readiness assessment & phased roadmap
 - **[TECH_DEBT.md](TECH_DEBT.md)** — prioritized debt register
 - **[docs/adr/](docs/adr/)** — architecture decisions (backend reuse, feature scope)
-- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP agentic stack & Agent Engine vs Cloud Run
+- **[docs/GCP_AGENTIC_STACK.md](docs/GCP_AGENTIC_STACK.md)** — GCP agentic stack & Agent Runtime vs Cloud Run
 
 ## 🙏 Acknowledgements
 
@@ -161,4 +161,4 @@ This is an early prototype with an honest paper trail:
 
 ---
 
-<div align="center"><sub>Built with Google ADK 2.0 · designed for Vertex AI Agent Engine</sub></div>
+<div align="center"><sub>Built with Google ADK 2.0 · designed for Agent Runtime on the Gemini Enterprise Agent Platform</sub></div>

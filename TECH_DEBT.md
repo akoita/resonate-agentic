@@ -19,7 +19,7 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 | 1 | **Backend integration is hand-written/guessed** — fix by adopting the backend's MCP server + OpenAPI-generated client + JWT auth (see ADR-0001), not by patching routes. Some paths confirmed wrong (wallet, upload); most protected endpoints send no JWT | Architecture / Docs | 4 | 5 | 2 | **36** | 1–2d |
 | 2 | **x402 payment path non-functional** — no proof is ever constructed/signed; purchases can't settle | Architecture | 5 | 5 | 3 | **30** | 3–5d |
 | 3 | **No CI** — tests/lint run only by hand | Infrastructure | 3 | 3 | 1 | **30** | hrs |
-| 4 | **No deployment artifacts** — no Dockerfile/Agent Engine config/IaC | Infrastructure | 4 | 3 | 2 | **28** | 1–2d |
+| 4 | **No deployment artifacts** — no Dockerfile/Agent Runtime config/IaC | Infrastructure | 4 | 3 | 2 | **28** | 1–2d |
 | 5 | **No observability** — no tracing/structured logging/metrics | Infrastructure | 3 | 4 | 2 | **28** | 1–2d |
 | 6 | **Secrets & model backend** — API key in `.env`; AI Studio key, not Vertex/Secret Manager | Infrastructure / Security | 2 | 4 | 2 | **24** | 1–2d |
 | 7 | **Placeholder workflow nodes** — `validate_upload`/`parse_input` hardcode title/artist/budget instead of parsing real input | Code | 3 | 3 | 2 | **24** | 1–2d |
@@ -43,8 +43,8 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
   literally cannot transact. Recommend delegating to the connected **agentcash MCP** (handles
   x402 + SIWX) rather than hand-rolling wallet signing in-process.
 - **#3 CI** — hours of work that protects every later change; highest leverage-per-effort item.
-- **#4/#5/#6 deploy + observability + secrets** — the minimum to run safely on **Agent Engine**
-  (see `docs/GCP_AGENTIC_STACK.md`). Agent Engine gives tracing and managed sessions largely for
+- **#4/#5/#6 deploy + observability + secrets** — the minimum to run safely on **Agent Runtime**
+  (see `docs/GCP_AGENTIC_STACK.md`). Agent Runtime gives tracing and managed sessions largely for
   free, which also discounts the effort on #5 and #9.
 - **#9 sessions** — multi-turn DJ/upload UX is broken today (state evaporates). Switching to Agent
   Engine managed Sessions fixes #9 as a side effect of #4.
@@ -62,8 +62,8 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 - #10/#12/#14 mop-up (centralize pricing constants, pin `pyproject`, route `stem_purchase` through `_http`) — bundle into the PRs above.
 
 ### Phase 2 — Production on GCP (rides with deployment)
-- #6 Vertex AI backend + Secret Manager + Workload Identity.
-- #4 Containerize + deploy to Agent Engine (which also resolves **#9** via managed Sessions/Memory).
+- #6 Agent Platform model backend + Secret Manager + Workload Identity.
+- #4 Containerize + deploy to Agent Runtime (which also resolves **#9** via managed Sessions/Memory).
 - #5 Cloud Trace + BigQuery prompt/response logging.
 - #11 Build eval datasets per workflow; gate CI on them.
 
