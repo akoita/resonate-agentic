@@ -1,0 +1,38 @@
+name: AI Review
+
+# First-pass AI code review on PRs (whitepaper: AI as a first reviewer, humans keep final say).
+# Optional: only runs when ANTHROPIC_API_KEY is configured as a repo secret; otherwise it no-ops.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    env:
+      HAVE_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude first-pass review
+        if: env.HAVE_KEY == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this pull request against AGENTS.md (hard rules) and SECURITY.md.
+            Flag, concisely: hallucinated/incorrect dependencies, missing error handling,
+            hard-rule violations (async tools, reuse-not-reimplement, portability, contract scope),
+            secret or deployment-host leaks, and silent stubs that don't self-flag.
+            Praise nothing; only surface issues and suggested fixes.
+
+      - name: Skipped (no key)
+        if: env.HAVE_KEY != 'true'
+        run: echo "ANTHROPIC_API_KEY not set — skipping AI review. Add the repo secret to enable."

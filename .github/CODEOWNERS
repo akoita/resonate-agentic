@@ -1,0 +1,9 @@
+# Default owner for everything in this repo.
+* @akoita
+
+# The harness is a first-class asset — owner reviews changes to it deliberately.
+/AGENTS.md            @akoita
+/.claude/             @akoita
+/scripts/             @akoita
+/.github/             @akoita
+/docs/adr/            @akoita
