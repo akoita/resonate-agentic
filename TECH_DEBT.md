@@ -16,7 +16,7 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 
 | # | Item | Category | Impact | Risk | Effort | **Score** | Est. |
 |---|------|----------|:--:|:--:|:--:|:--:|:--:|
-| 1 | **Backend API contract unverified** — tool URLs guessed, mixed `/api` prefixes, no auth verified against real Resonate backend | Architecture / Docs | 4 | 5 | 2 | **36** | 1–2d |
+| 1 | **Backend integration is hand-written/guessed** — fix by adopting the backend's MCP server + OpenAPI-generated client + JWT auth (see ADR-0001), not by patching routes. Some paths confirmed wrong (wallet, upload); most protected endpoints send no JWT | Architecture / Docs | 4 | 5 | 2 | **36** | 1–2d |
 | 2 | **x402 payment path non-functional** — no proof is ever constructed/signed; purchases can't settle | Architecture | 5 | 5 | 3 | **30** | 3–5d |
 | 3 | **No CI** — tests/lint run only by hand | Infrastructure | 3 | 3 | 1 | **30** | hrs |
 | 4 | **No deployment artifacts** — no Dockerfile/Agent Engine config/IaC | Infrastructure | 4 | 3 | 2 | **28** | 1–2d |
@@ -35,8 +35,10 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 
 ## Business justification (top items)
 
-- **#1 Backend contract** — until tool routes match the real Resonate API, *every* real interaction
-  fails or returns garbage. It's cheap to fix and unblocks all downstream work; do it first.
+- **#1 Backend integration** — until tools match the real Resonate API, *every* real interaction
+  fails or returns garbage. The backend ships an MCP server + OpenAPI spec built for agents, so the
+  fix is to *consume* those (ADR-0001), which also discounts #2 (x402 handled by MCP `stem.download`).
+  Cheap and unblocks everything; do it first.
 - **#2 x402** — purchasing is the platform's core value prop. Without proof generation, the product
   literally cannot transact. Recommend delegating to the connected **agentcash MCP** (handles
   x402 + SIWX) rather than hand-rolling wallet signing in-process.
