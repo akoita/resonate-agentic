@@ -16,6 +16,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -28,6 +29,7 @@ def tracked_files() -> list[Path]:
     return [ROOT / p for p in out]
 
 
+@lru_cache(maxsize=None)
 def read(p: Path) -> str:
     try:
         return p.read_text(encoding="utf-8")
@@ -40,10 +42,12 @@ def check_async_tools(files: list[Path]) -> list[str]:
     # match real calls, not prose/docstrings that name the anti-pattern
     pat = re.compile(r"\.run_until_complete\(|get_event_loop\(|asyncio\.run\(")
     for f in files:
-        if f.suffix == ".py" and "app/tools/" in f.as_posix():
+        posix = f.as_posix()
+        in_app = posix.startswith("app/") or "/app/" in posix
+        if f.suffix == ".py" and in_app:
             for i, line in enumerate(read(f).splitlines(), 1):
                 if pat.search(line):
-                    bad.append(f"{f.relative_to(ROOT)}:{i}: event-loop anti-pattern in a tool (rule 2)")
+                    bad.append(f"{f.relative_to(ROOT)}:{i}: event-loop anti-pattern in app/ (rule 2)")
     return bad
 
 
@@ -78,7 +82,7 @@ def check_no_secrets(files: list[Path]) -> list[str]:
     pat = re.compile(
         r"""(?i)\b(secret|token|passwd|password|api[_-]?key|private[_-]?key)\b\s*[:=]\s*["'][A-Za-z0-9_\-/+]{16,}["']"""
     )
-    allow = re.compile(r"getenv|environ|os\.environ|Field\(|description=|example|your-|<|\$\{|placeholder")
+    allow = re.compile(r"getenv|environ|os\.environ|Field\(|description=|your-|<|\$\{|placeholder")
     skip_names = {"poetry.lock", "LICENSE", ".env.example"}
     for f in files:
         if f.name in skip_names or f.name == "harness_guardrails.py":

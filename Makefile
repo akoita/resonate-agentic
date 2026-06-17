@@ -42,4 +42,5 @@ deploy: ## Deploy to the priority target (Agent Runtime) — see eval-and-deploy
 	@echo "Deploy not yet wired — see docs/GCP_AGENTIC_STACK.md and ADR-0003 (portable targets)."
 
 clean: ## Remove caches
-	rm -rf .pytest_cache .ruff_cache **/__pycache__
+	rm -rf .pytest_cache .ruff_cache
+	find . -name __pycache__ -type d -prune -exec rm -rf {} +
