@@ -44,7 +44,7 @@
 
   <!-- wordmark -->
   <text x="430" y="158" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="-1.5" fill="#f5f7ff">Resonate <tspan fill="url(#accent)">Agentic</tspan></text>
-  <text x="434" y="206" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="25" font-weight="500" fill="#9fb0d0">The agentic audio protocol — AI-native music discovery, commerce &amp; creation.</text>
+  <text x="434" y="204" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" font-weight="500" fill="#9fb0d0">The agentic audio protocol — AI-native music discovery &amp; commerce.</text>
 
   <!-- chips -->
   <g font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="16" font-weight="600">
@@ -68,14 +68,14 @@
 
   <!-- waveform baseline -->
   <g stroke="url(#accent)" stroke-width="3" stroke-linecap="round" stroke-opacity="0.85">
-    <line x1="1050" y1="150" x2="1050" y2="210"/>
-    <line x1="1070" y1="120" x2="1070" y2="240"/>
-    <line x1="1090" y1="160" x2="1090" y2="200"/>
-    <line x1="1110" y1="96"  x2="1110" y2="264"/>
-    <line x1="1130" y1="138" x2="1130" y2="222"/>
-    <line x1="1150" y1="170" x2="1150" y2="190"/>
-    <line x1="1170" y1="110" x2="1170" y2="250"/>
-    <line x1="1190" y1="150" x2="1190" y2="210"/>
-    <line x1="1210" y1="128" x2="1210" y2="232"/>
+    <line x1="1100" y1="150" x2="1100" y2="210"/>
+    <line x1="1120" y1="120" x2="1120" y2="240"/>
+    <line x1="1140" y1="160" x2="1140" y2="200"/>
+    <line x1="1160" y1="96"  x2="1160" y2="264"/>
+    <line x1="1180" y1="138" x2="1180" y2="222"/>
+    <line x1="1200" y1="170" x2="1200" y2="190"/>
+    <line x1="1220" y1="110" x2="1220" y2="250"/>
+    <line x1="1240" y1="150" x2="1240" y2="210"/>
+    <line x1="1260" y1="128" x2="1260" y2="232"/>
   </g>
 </svg>
