@@ -176,6 +176,7 @@ the same harness drives **Claude Code, OpenAI Codex, and Gemini CLI** from one s
 - **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)** — the SDLC mapping + the **Multi-tool harness** table
 - **[.agents/skills/](.agents/skills/)** — canonical `SKILL.md` skills (Claude via `.claude/skills`, Codex native, Gemini via [`.gemini/commands/`](.gemini/commands/))
 - **[scripts/harness_guardrails.py](scripts/harness_guardrails.py)** — deterministic guardrails · **[CONTRIBUTING.md](CONTRIBUTING.md)** · **[SECURITY.md](SECURITY.md)** · `make check`
+- **Deployment** lives in a separate **private** control plane, `akoita/resonate-agentic-iac` (Terraform + WIF + gated CD) — this public repo holds **no cloud credentials**. See [ADR-0005](docs/adr/ADR-0005-deployment-iac-repo-separation.md).
 
 ## 🙏 Acknowledgements
 

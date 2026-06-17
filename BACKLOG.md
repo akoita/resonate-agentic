@@ -15,9 +15,9 @@ sized for an agent task (one PR). `make check` must pass before any item is clos
 | BL-05 | Eval harness: trajectory + final-response evals per workflow, with rubrics; CI gate | next | eval | whitepaper "set the bar at the eval" · `make eval` runs |
 | BL-06 | Observability: Cloud Trace + structured logging behind config (portable) | next | infra | ADR-0003 · no-op locally, on in prod |
 | BL-07 | Managed Sessions/Memory behind a factory with in-memory fallback; drop per-call `InMemoryRunner` | next | infra | TECH_DEBT #9 · ADR-0003 guardrail |
-| BL-08 | Deploy recipes: Agent Runtime (priority) + Cloud Run (portable) | next | infra | ADR-0003 · `make deploy` documented |
+| BL-08 | Deploy recipes: Agent Runtime (priority) + Cloud Run (portable) — **owned by [resonate-agentic-iac](https://github.com/akoita/resonate-agentic-iac)**; here only the build + deploy-intent sender | next | infra | ADR-0003 · ADR-0005 |
 | BL-09 | Fix the 7-stem-type assumption (`vocals…other,original`) in schemas/instructions | next | docs | matches live storefront |
-| BL-10 | Secret Manager + Workload Identity for GCP deploys | later | infra | no secrets in env at rest |
+| BL-10 | Secret Manager + Workload Identity for GCP deploys — **owned by [resonate-agentic-iac](https://github.com/akoita/resonate-agentic-iac)** (ADR-0005) | later | infra | no secrets at rest |
 | BL-11 | LiteLLM (non-Gemini) example to demonstrate model portability | later | docs | ADR-0003 |
 | BL-12 | Harden: idempotent purchases, rate limiting, privacy review | later | infra | — |
 | BL-13 | DJ-via-backend-scorer + artist upload + analytics + community | blocked | dj/community | needs ADR-0004 (agent auth) |
