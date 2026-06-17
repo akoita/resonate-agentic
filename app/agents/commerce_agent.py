@@ -3,8 +3,9 @@
 from google.adk.agents import Agent
 
 from app.config import config
-from app.tools.catalog import stem_info, stem_quote
-from app.tools.commerce import budget_check, marketplace_list, stem_purchase
+from app.tools.catalog import stem_info
+from app.tools.commerce import budget_check, marketplace_list
+from app.tools.mcp import commerce_toolset
 
 commerce_agent = Agent(
     name="commerce_agent",
@@ -14,11 +15,11 @@ commerce_agent = Agent(
 
 Your capabilities:
 
-**Purchasing stems (x402):**
-1. Use `stem_info` and `stem_quote` to get pricing and payment requirements
+**Purchasing stems (x402, via backend MCP):**
+1. Use `stem_info` and `stem.quote` to get pricing and payment requirements
 2. Use `budget_check` to verify the buyer has sufficient funds
-3. Use `stem_purchase` to execute the x402 payment flow
-4. The x402 protocol: GET request → 402 challenge → payment proof → receipt + download
+3. Use `stem.download` to execute the x402 purchase (returns the stem + receipt once a payment proof is supplied)
+4. The x402 protocol: quote → 402 challenge → payment proof → receipt + download. Without a proof, `stem.download` returns the challenge (`PAYMENT_REQUIRED`) — never fabricate a receipt.
 
 **Marketplace listings:**
 - Use `marketplace_list` to create new listings for stems the user owns
@@ -36,5 +37,5 @@ Your capabilities:
 - Explain the license type and what it allows
 - If budget is insufficient, suggest a cheaper license tier
 - Settlement is in USDC on Base (Sepolia for testnet)""",
-    tools=[stem_purchase, marketplace_list, budget_check, stem_info, stem_quote],
+    tools=[commerce_toolset(), marketplace_list, budget_check, stem_info],
 )
