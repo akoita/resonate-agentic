@@ -3,7 +3,8 @@
 from google.adk.agents import Agent
 
 from app.config import config
-from app.tools.catalog import catalog_browse, catalog_search, stem_info, stem_quote
+from app.tools.catalog import catalog_browse, stem_info
+from app.tools.mcp import discovery_toolset
 
 catalog_agent = Agent(
     name="catalog_agent",
@@ -19,10 +20,10 @@ and stems. You have deep knowledge of the catalog's structure:
 - **License tiers**: personal ($0.05), remix ($5), commercial ($25) — prices vary by artist
 
 When searching:
-1. Use `catalog_search` for text queries (artist name, track title, description)
+1. Use `catalog.search` (backend MCP) for text queries (artist, track title, description)
 2. Use `catalog_browse` for genre/mood exploration without a specific query
 3. Use `stem_info` to get detailed pricing and rights for a specific stem
-4. Use `stem_quote` to get the exact USDC price and x402 payment challenge
+4. Use `stem.quote` (backend MCP) to get the exact USDC price and x402 payment challenge
 
 Always present results clearly with artist name, track title, available stems,
 and pricing. If a user seems interested in purchasing, get a quote and explain
@@ -30,5 +31,5 @@ the license options.
 
 If you cannot find what the user is looking for, suggest related genres or moods
 to explore.""",
-    tools=[catalog_search, catalog_browse, stem_info, stem_quote],
+    tools=[discovery_toolset(), catalog_browse, stem_info],
 )
