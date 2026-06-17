@@ -1,13 +1,27 @@
 version: 2
 updates:
+  # Python deps — one grouped PR per month, not one per package.
   - package-ecosystem: pip
     directory: "/"
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
+      interval: monthly
+    open-pull-requests-limit: 3
+    groups:
+      python:
+        patterns: ["*"]
     labels: ["later", "infra", "dependencies"]
+    commit-message:
+      prefix: deps
+
+  # GitHub Actions — one grouped PR per month. Security advisories still raise PRs immediately.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns: ["*"]
     labels: ["later", "infra", "dependencies"]
+    commit-message:
+      prefix: ci
