@@ -172,6 +172,7 @@ This repo is set up for **agentic engineering**, not ad-hoc vibe coding — an e
 around the model (instructions, skills, tools, guardrails, evals, CI). It is **vendor-neutral**:
 the same harness drives **Claude Code, OpenAI Codex, and Gemini CLI** from one source.
 
+- **[docs/AGENTIC_PLATFORM_STRATEGY.md](docs/AGENTIC_PLATFORM_STRATEGY.md)** — the blueprint: how to manage professional agentic dev + deployment (GCP-first, vendor-portable)
 - **[AGENTS.md](AGENTS.md)** — the harness rules (open standard; `CLAUDE.md`/`GEMINI.md` symlink to it)
 - **[docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md)** — the SDLC mapping + the **Multi-tool harness** table
 - **[.agents/skills/](.agents/skills/)** — canonical `SKILL.md` skills (Claude via `.claude/skills`, Codex native, Gemini via [`.gemini/commands/`](.gemini/commands/))
