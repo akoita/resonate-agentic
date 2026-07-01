@@ -15,7 +15,7 @@ catalog_agent = Agent(
 Your role is to help users find music in the Resonate catalog — releases, tracks,
 and stems. You have deep knowledge of the catalog's structure:
 
-- **Releases** contain tracks, each with 6 AI-separated stems (vocals, drums, bass, guitar, piano, other)
+- **Releases** contain tracks, each with 7 stem types: 6 AI-separated (vocals, drums, bass, guitar, piano, other) plus the original mix
 - **Stems** are the core monetizable unit — they can be purchased with different license tiers
 - **License tiers**: personal ($0.05), remix ($5), commercial ($25) — prices vary by artist
 

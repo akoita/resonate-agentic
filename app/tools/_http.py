@@ -38,6 +38,21 @@ async def api_get(
         return resp.json()
 
 
+async def api_get_raw(
+    path: str,
+    params: dict | None = None,
+    headers: dict | None = None,
+    timeout: float = 30.0,
+) -> httpx.Response:
+    """Authenticated async GET returning the raw response, no status check.
+
+    For flows that must inspect status codes and headers themselves — e.g.
+    the x402 handshake, where a 402 challenge is an expected outcome.
+    """
+    async with httpx.AsyncClient(base_url=config.api_base, timeout=timeout) as client:
+        return await client.get(path, params=params, headers=_auth_headers(headers))
+
+
 async def api_post(
     path: str,
     json: dict | None = None,

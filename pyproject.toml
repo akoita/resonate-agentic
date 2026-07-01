@@ -4,8 +4,8 @@ version = "0.1.0"
 description = "Resonate — Agentic-first music platform powered by ADK 2.0"
 requires-python = ">=3.11"
 dependencies = [
-    "google-adk>=2.0.0",
-    "google-genai",
+    "google-adk>=2.2,<3",
+    "google-genai>=2.8,<3",
     "mcp>=1.0",
     "httpx>=0.27.0",
     "pydantic>=2.0",

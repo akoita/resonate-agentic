@@ -6,6 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Default license pricing tiers (USD) — the single source of truth for the
+# defaults quoted in schemas, tools, and workflows. Artists override per stem.
+PRICE_PERSONAL_USD = 0.05
+PRICE_REMIX_USD = 5.0
+PRICE_COMMERCIAL_USD = 25.0
+
 
 @dataclass(frozen=True)
 class ResonateConfig:

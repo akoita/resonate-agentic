@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import httpx
 
+from app.config import PRICE_COMMERCIAL_USD, PRICE_PERSONAL_USD, PRICE_REMIX_USD
+from app.schemas import STEM_TYPES
 from app.tools._http import api_get, api_post
 
 
@@ -52,8 +54,8 @@ async def release_upload(
             "release_id": data.get("id", ""),
             "title": title,
             "processing_status": data.get("status", "processing"),
-            "stem_types": ["vocals", "drums", "bass", "guitar", "piano", "other"],
-            "message": "Release uploaded. Stem separation in progress (htdemucs_6s).",
+            "stem_types": list(STEM_TYPES),
+            "message": "Release uploaded. Stem separation in progress (htdemucs_6s); the original mix is kept as a 7th stem.",
         }
     except Exception as e:
         return {"status": "error", "error": str(e)}
@@ -61,9 +63,9 @@ async def release_upload(
 
 def stem_price(
     stem_id: str,
-    base_price_usd: float = 0.05,
-    remix_price_usd: float = 5.0,
-    commercial_price_usd: float = 25.0,
+    base_price_usd: float = PRICE_PERSONAL_USD,
+    remix_price_usd: float = PRICE_REMIX_USD,
+    commercial_price_usd: float = PRICE_COMMERCIAL_USD,
 ) -> dict:
     """Set pricing tiers for a stem.
 

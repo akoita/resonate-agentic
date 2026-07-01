@@ -1,6 +1,6 @@
 # Resonate Agentic — Tech Debt Register
 
-_Assessed 2026-06-17, post-Phase-0 (commit `5af1708`). Scoring: `(Impact + Risk) × (6 − Effort)`, each 1–5._
+_Assessed 2026-06-17, post-Phase-0 (commit `5af1708`); refreshed 2026-07-01. Scoring: `(Impact + Risk) × (6 − Effort)`, each 1–5._
 
 Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 days · **4** ≈ 1–2 weeks · **5** ≈ multi-week.
 
@@ -10,6 +10,15 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 - ✅ **No runtime tests** — added `tests/test_workflow_runtime.py` (engine + tools proven offline).
 - ✅ **Silent fake tools** — stub tools now self-identify with `"stub": True`.
 
+## Paid down since (2026-07-01 refresh)
+- ✅ **#3 No CI** — GitHub Actions run `make check` (ruff + pytest + guardrails) on 3.11/3.12/3.13 (`ci.yml`), plus weekly security scans (`security.yml`) and pre-commit hooks.
+- ✅ **#10 Duplicated pricing constants** — single source in `app/config.py` (`PRICE_*_USD`); schemas, artist tools, and workflows import it.
+- ✅ **#12 Loose pins** — `google-adk`/`google-genai` pinned to compatible ranges in `pyproject.toml`; the 3.11–3.13 matrix runs in CI.
+- ✅ **#14 `stem_purchase` inlined httpx** — commerce tools now go through `app/tools/_http.py` (`api_get` / new `api_get_raw`).
+- ✅ **7-stem-type assumption (BL-09)** — `STEM_TYPES` in `app/schemas.py` includes `original`; schemas, tools, instructions, and README updated.
+- ➗ **#1 partially** — catalog/commerce now ride the backend MCP (`McpToolset` → `/mcp`, PR #26); the typed OpenAPI client for the remaining read paths is BL-02 (#8).
+- ➗ **#11 partially** — tool error-path tests added (`tests/test_tool_errors.py`); LLM/agent eval sets remain (BL-05, #11).
+
 ---
 
 ## Open debt — prioritized
@@ -18,18 +27,18 @@ Effort key (rough): **1** ≈ hours · **2** ≈ 1–2 days · **3** ≈ 3–5 d
 |---|------|----------|:--:|:--:|:--:|:--:|:--:|
 | 1 | **Backend integration is hand-written/guessed** — fix by adopting the backend's MCP server + OpenAPI-generated client + JWT auth (see ADR-0001), not by patching routes. Some paths confirmed wrong (wallet, upload); most protected endpoints send no JWT | Architecture / Docs | 4 | 5 | 2 | **36** | 1–2d |
 | 2 | **x402 payment path non-functional** — no proof is ever constructed/signed; purchases can't settle | Architecture | 5 | 5 | 3 | **30** | 3–5d |
-| 3 | **No CI** — tests/lint run only by hand | Infrastructure | 3 | 3 | 1 | **30** | hrs |
+| 3 | ~~**No CI**~~ ✅ resolved — see "Paid down since" | Infrastructure | — | — | — | — | — |
 | 4 | **No deployment artifacts** — no Dockerfile/Agent Runtime config/IaC | Infrastructure | 4 | 3 | 2 | **28** | 1–2d |
 | 5 | **No observability** — no tracing/structured logging/metrics | Infrastructure | 3 | 4 | 2 | **28** | 1–2d |
 | 6 | **Secrets & model backend** — API key in `.env`; AI Studio key, not Vertex/Secret Manager | Infrastructure / Security | 2 | 4 | 2 | **24** | 1–2d |
 | 7 | **Placeholder workflow nodes** — `validate_upload`/`parse_input` hardcode title/artist/budget instead of parsing real input | Code | 3 | 3 | 2 | **24** | 1–2d |
 | 8 | **5 stub tools** — `marketplace_list`, `stem_price`, `stem_mint`, `shows_campaign`, room create/join return synthetic data | Code (functional) | 3 | 4 | 3 | **21** | 3–5d |
 | 9 | **Ephemeral sessions** — `WorkflowAgent` spawns a fresh `InMemoryRunner`+session per call; state lost between turns, not shared with parent | Architecture | 4 | 3 | 3 | **21** | 3–5d |
-| 10 | **Duplicated pricing constants** — `0.05/5/25` tiers + floor/ceiling repeated across `schemas.py`, artist tools, workflows | Code | 2 | 2 | 1 | **20** | hrs |
+| 10 | ~~**Duplicated pricing constants**~~ ✅ resolved — see "Paid down since" | Code | — | — | — | — | — |
 | 11 | **Thin test coverage / no eval** — no tool error-path tests, no LLM/agent eval sets, real workflows never run with a live model | Test | 3 | 3 | 3 | **18** | 3–5d |
-| 12 | **Loose dependency pins in `pyproject`** — `google-genai` unpinned; 3.11-vs-3.13 matrix untested | Dependency | 1 | 2 | 1 | **15** | hrs |
+| 12 | ~~**Loose dependency pins in `pyproject`**~~ ✅ resolved — see "Paid down since" | Dependency | — | — | — | — | — |
 | 13 | **Sub-agent sprawl/overlap** — root has 8 sub-agents; `discovery_purchase` workflow overlaps `catalog`+`commerce` specialists → routing cost & ambiguity | Architecture | 2 | 2 | 3 | **12** | 3–5d |
-| 14 | **`stem_purchase` inlines httpx** instead of the shared `_http` helper (minor dup) | Code | 1 | 1 | 1 | **10** | hrs |
+| 14 | ~~**`stem_purchase` inlines httpx**~~ ✅ resolved — see "Paid down since" | Code | — | — | — | — | — |
 
 ---
 

@@ -12,15 +12,17 @@ Legend: ✅ done · 🔜 in progress / next · 🧭 planned · 🔒 blocked (nee
 - **Feature scope** — compute-vs-data split; DJ re-pointed to public catalog. ([ADR-0002](docs/adr/ADR-0002-feature-scope-compute-vs-data.md))
 - **Portability stance** — Gemini Enterprise priority, not lock-in. ([ADR-0003](docs/adr/ADR-0003-runtime-and-model-portability.md))
 - **Agentic dev harness** — AGENTS.md, skills, guardrails, CI, this roadmap. ([docs/AGENTIC_SDLC.md](docs/AGENTIC_SDLC.md))
+- **MCP toolset wired** — ADK `McpToolset` → backend `/mcp` (catalog + commerce). (BL-01, [#7](https://github.com/akoita/resonate-agentic/issues/7), PR #26)
+- **Budget guardrail** — spend enforced via ADK `before/after_tool_callback` on purchase tools. (BL-04, [#10](https://github.com/akoita/resonate-agentic/issues/10), PR #28)
+- **7-stem-type fix** — `STEM_TYPES` includes `original`; schemas/instructions/README updated. (BL-09, [#15](https://github.com/akoita/resonate-agentic/issues/15))
 
 ## 🔜 Now (current focus)
 
 | | Item | Why | Ref |
 |---|---|---|---|
-| 🔜 | Wire ADK `McpToolset` → `$RESONATE_API_BASE/mcp` (catalog/quote/purchase) | Real, supported agent commerce | BL-01 |
 | 🔜 | Generate typed client from `/openapi.json` for public read paths | Kill route drift | BL-02 |
 | 🔜 | x402 proof (in-app x402 client) → one live 0.05-USDC purchase (needs testnet wallet) | Core value prop works | BL-03 |
-| 🔜 | Budget guardrail as ADK `before_tool_callback` on purchases | Enforce, don't just instruct | BL-04 |
+| 🔜 | Agent Runtime deploy track: ADR-0006 → deploy entrypoint (#21 → #22, after #23) | Eval-gated deploys | — |
 
 ## 🧭 Next
 
@@ -30,7 +32,6 @@ Legend: ✅ done · 🔜 in progress / next · 🧭 planned · 🔒 blocked (nee
 | 🧭 | Observability: Cloud Trace + structured logs (portable behind config) | BL-06 |
 | 🧭 | Managed Sessions/Memory behind config with in-memory fallback (replace `InMemoryRunner`) | BL-07 |
 | 🧭 | Deploy recipes (Agent Runtime + Cloud Run) — in private [resonate-agentic-iac](https://github.com/akoita/resonate-agentic-iac) (ADR-0005); here: build + deploy-intent | BL-08 |
-| 🧭 | Fix 7-stem-type assumption (`…, other, original`) | BL-09 |
 
 ## 🧭 Later
 
