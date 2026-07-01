@@ -4,3 +4,4 @@ mcp==1.28.0
 httpx==0.28.1
 pydantic==2.13.4
 python-dotenv==1.2.2
+x402[evm]==2.14.0
