@@ -11,7 +11,23 @@ from __future__ import annotations
 import httpx
 
 from app.config import config
-from app.tools._http import api_get, api_get_raw
+from app.tools._http import _auth_headers, api_get, api_get_raw
+from app.tools.payments import payer_address, payment_client, x402_enabled
+
+
+def _receipt(resp: httpx.Response, stem_id: str, license_type: str) -> dict:
+    """Normalize a successful purchase response into the tool result."""
+    return {
+        "status": "purchased",
+        "stem_id": stem_id,
+        "license_type": license_type,
+        "receipt_id": resp.headers.get("X-Resonate-Receipt-Id", ""),
+        "receipt": resp.headers.get("X-Resonate-Receipt", ""),
+        "license": resp.headers.get("X-Resonate-License", ""),
+        "payment_response": resp.headers.get("PAYMENT-RESPONSE", ""),
+        "content_type": resp.headers.get("content-type", ""),
+        "size_bytes": len(resp.content),
+    }
 
 
 async def stem_purchase(
@@ -20,33 +36,55 @@ async def stem_purchase(
     payment_proof: str | None = None,
     buyer_wallet: str | None = None,
 ) -> dict:
-    """Purchase a stem via x402 payment protocol.
+    """Purchase a stem via the x402 payment protocol.
 
-    Executes a full x402 purchase flow: challenge → payment → settlement → receipt.
-    If no payment_proof is provided, returns the payment challenge for the client
-    to satisfy.
-
-    NOTE: This tool forwards an ``X-PAYMENT`` proof but does NOT construct/sign one.
-    A real purchase requires an x402 payment client (per-env wallet; see docs/plans/9-x402-proof.md) to
-    produce ``payment_proof`` first. Without it, this returns the 402 challenge.
+    With a configured payer wallet (``X402_PRIVATE_KEY``), executes the full
+    flow — challenge → signed EIP-3009 payment → settlement → receipt — via
+    the in-app x402 client (network + per-payment cap enforced; see
+    ``app/tools/payments.py``). Without one, returns the 402 challenge, or
+    forwards an externally produced ``payment_proof`` if given.
 
     Args:
         stem_id: The stem to purchase.
         license_type: License tier — 'personal', 'remix', or 'commercial'.
-        payment_proof: x402 payment proof (base64). If None, returns the challenge.
+        payment_proof: Pre-built x402 payment header value (base64). Optional.
         buyer_wallet: Recipient wallet address for NFT delivery.
 
     Returns:
-        If payment_proof is None: dict with 'payment_required' status and challenge.
-        If payment_proof is provided: dict with receipt, download URL, and license info.
+        Dict with 'purchased' status + receipt on success, 'payment_required'
+        + challenge when unpaid, or 'error'.
     """
-    headers: dict[str, str] = {}
-    if payment_proof:
-        headers["X-PAYMENT"] = payment_proof
+    extra: dict[str, str] = {}
     if buyer_wallet:
-        headers["X-Resonate-Buyer"] = buyer_wallet
+        extra["X-Resonate-Buyer"] = buyer_wallet
 
     try:
+        if payment_proof is None and x402_enabled():
+            # Auto-pay: the x402 transport answers the 402 with a signed
+            # authorization and retries; a still-402 means payment was refused.
+            async with payment_client(timeout=60.0) as client:
+                resp = await client.get(
+                    f"/api/stems/{stem_id}/x402",
+                    params={"licenseType": license_type},
+                    headers=_auth_headers(extra),
+                )
+                if resp.status_code == 402:
+                    return {
+                        "status": "payment_required",
+                        "stem_id": stem_id,
+                        "license_type": license_type,
+                        "challenge": resp.headers.get("PAYMENT-REQUIRED", ""),
+                        "payer": payer_address(),
+                        "detail": "payment attempted but not accepted",
+                    }
+                resp.raise_for_status()
+                return _receipt(resp, stem_id, license_type) | {
+                    "payer": payer_address()
+                }
+
+        headers = dict(extra)
+        if payment_proof:
+            headers["X-PAYMENT"] = payment_proof
         resp = await api_get_raw(
             f"/api/stems/{stem_id}/x402",
             params={"licenseType": license_type},
@@ -63,15 +101,7 @@ async def stem_purchase(
             }
 
         resp.raise_for_status()
-        return {
-            "status": "purchased",
-            "stem_id": stem_id,
-            "license_type": license_type,
-            "receipt_id": resp.headers.get("X-Resonate-Receipt-Id", ""),
-            "receipt": resp.headers.get("X-Resonate-Receipt", ""),
-            "content_type": resp.headers.get("content-type", ""),
-            "size_bytes": len(resp.content),
-        }
+        return _receipt(resp, stem_id, license_type)
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
