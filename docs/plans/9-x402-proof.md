@@ -1,6 +1,6 @@
 # Issue #9 (BL-03) — x402 proof generation / real purchase · implementation plan
 
-**Issue:** https://github.com/akoita/resonate-agentic/issues/9 · **ADR:** ADR-0001 · **Status:** blocked (needs a funded Base-Sepolia testnet wallet + a decision)
+**Issue:** https://github.com/akoita/resonate-agentic/issues/9 · **ADR:** ADR-0001 · **Status:** implemented (PR #36) — client + offline proof landed; live settlement gated on the owner-run test
 
 ## Goal
 Turn the 402 challenge into a real **discover → quote → pay → receipt**: the agent supplies a valid
@@ -33,12 +33,15 @@ The agent needs its **own x402 client** bound to the endpoint's network:
   `…/x402` with the proof → receipt headers (`X-Resonate-Receipt[-Id]`, `X-Resonate-License`).
 - **Guardrail:** the budget `before_tool_callback` (#10) MUST gate spend before any payment fires.
 
-## Blocked on (decisions for the owner)
+## Decisions resolved (2026-07-02)
 
-1. **A funded Base-Sepolia testnet wallet** (private key) to validate a real ~0.05-USDC purchase.
-   (Get test USDC from a Base Sepolia faucet → an EOA we control.)
-2. **x402 client choice** — confirm the Python lib (`x402` SDK vs hand-rolled EIP-712 signer).
-3. Prod key management (Cloud KMS) — deferred to deployment (control-plane repo).
+1. ✅ **Testnet wallet** — a throwaway Base-Sepolia EOA was created and faucet-funded
+   (key outside the repo, injected via `RESONATE_X402_TESTNET_KEY` / `X402_PRIVATE_KEY`).
+2. ✅ **x402 client choice** — the `x402` Python SDK (v2.14, x402 Foundation), V2 wire format
+   (`PAYMENT-REQUIRED` header challenge → EIP-3009 signature → `PAYMENT-SIGNATURE` retry).
+   Chosen over a hand-rolled signer per rule 1 (reuse); signing correctness is proven offline
+   by EIP-712 recovery in `tests/test_x402_payment.py`.
+3. Prod key management (Cloud KMS) — still deferred to deployment (control-plane repo).
 
 ## Scope when unblocked
 - `app/tools/payments.py` x402 client + a `stem_purchase` tool using it.
@@ -51,4 +54,19 @@ The agent needs its **own x402 client** bound to the endpoint's network:
 - ❌ No unvalidated signing code merged as if it works (avoid the 80% problem) — live-validate first.
 
 ## Validation
-- Pending a testnet wallet. Until then: design only; no settlement performed.
+
+**Offline (proven, in CI):** mocked V2 paywall → the SDK signs → retry carries
+`PAYMENT-SIGNATURE` → receipt; the EIP-712 signature is verified by recovery against the payer
+address; foreign-network and over-cap challenges are never paid (`tests/test_x402_payment.py`).
+
+**Live run (2026-07-02) — blocked by a backend bug, not the client:**
+- The staging challenge advertises `extra.name: "Circle USDC"`, but the Circle USDC contract on
+  Base Sepolia (`0x036CbD…dCF7e`) has `name() = "USDC"` (checked on-chain). `extra.name/version`
+  is the EIP-712 domain for EIP-3009 signing, so the challenge is self-inconsistent:
+  - signing with the challenge's domain → `invalid_exact_evm_token_name_mismatch`;
+  - signing with the token's true domain → `invalid_exact_evm_signature` (verifier reconstructs
+    from its own `extra.name`).
+  **No spec-compliant client can settle** until the backend middleware sets `extra.name: "USDC"`.
+- Fix filed upstream against akoita/resonate. The gated live test (`tests/test_x402_live.py`)
+  re-proves the full discover→quote→pay→receipt the moment the backend deploys the fix.
+- Wallet state: the throwaway Base-Sepolia EOA holds 20 test USDC; no settlement occurred.
