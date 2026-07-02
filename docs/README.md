@@ -28,7 +28,8 @@ significant changes that alter a decision get a *new* ADR (don't rewrite history
 - [ADR-0002](adr/ADR-0002-feature-scope-compute-vs-data.md) — feature scope: compute vs data split
 - [ADR-0003](adr/ADR-0003-runtime-and-model-portability.md) — runtime & model portability
 - [ADR-0005](adr/ADR-0005-deployment-iac-repo-separation.md) — private IaC / control-plane repo split
-- ADR-0004 (reserved: agent auth, [#19](https://github.com/akoita/resonate-agentic/issues/19)) · ADR-0006 (pending: agent-ops deploy, [#21](https://github.com/akoita/resonate-agentic/issues/21))
+- [ADR-0006](adr/ADR-0006-agent-ops-deployment-model.md) — agent-ops deployment model (Agent Runtime, source-based)
+- ADR-0004 (reserved: agent auth, [#19](https://github.com/akoita/resonate-agentic/issues/19) / [#35](https://github.com/akoita/resonate-agentic/issues/35))
 
 ### Guides & strategy
 - [AGENTIC_PLATFORM_STRATEGY.md](AGENTIC_PLATFORM_STRATEGY.md) — professional dev + deploy blueprint (GCP-first, portable)
