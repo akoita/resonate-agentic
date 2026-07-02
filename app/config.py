@@ -42,6 +42,11 @@ class ResonateConfig:
             "X402_FACILITATOR_URL", "https://x402.org/facilitator"
         )
     )
+    # Payer wallet key (hex). Testnet key via env in dev/staging; managed
+    # secret in deployed envs (ADR-0005). Empty = payments disabled.
+    x402_private_key: str = field(
+        default_factory=lambda: os.getenv("X402_PRIVATE_KEY", "")
+    )
 
     # Agent defaults
     default_budget_usd: float = field(
