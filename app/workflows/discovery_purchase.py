@@ -12,12 +12,12 @@ from google.adk.agents import LlmAgent
 from google.adk.agents.context import Context
 from google.adk.events.event import Event
 from google.adk.workflow import Workflow
-from google.genai import types
 from pydantic import BaseModel
 
 from app.config import config
 from app.tools.catalog import catalog_search, stem_quote
 from app.tools.commerce import budget_check, stem_purchase
+from app.workflows._parsing import parse_discovery_input
 
 
 # ─── Pydantic I/O Schemas ───────────────────────────────────────────
@@ -48,19 +48,17 @@ class PurchaseDecision(BaseModel):
 # ─── Workflow Nodes ──────────────────────────────────────────────────
 
 
-def parse_input(ctx: Context, node_input: Any) -> dict:
-    """Parse the user's discovery request."""
-    text = ""
-    if isinstance(node_input, types.Content):
-        text = node_input.parts[0].text if node_input.parts else ""
-    elif isinstance(node_input, str):
-        text = node_input
-    else:
-        text = str(node_input)
-
+def parse_input(ctx: Context, node_input: Any) -> Event:
+    """Parse the user's discovery request (JSON or natural language)."""
+    parsed = parse_discovery_input(node_input)
     return Event(
-        output={"query": text, "license_type": "personal", "max_budget_usd": 10.0},
-        state={"search_query": text},
+        output=parsed.model_dump(mode="json"),
+        state={
+            "search_query": parsed.query,
+            "license_type": parsed.license_type.value,
+            "max_budget_usd": parsed.max_budget_usd,
+            "auto_purchase": parsed.auto_purchase,
+        },
     )
 
 
@@ -101,7 +99,7 @@ async def get_quote(ctx: Context, node_input: Any) -> Event:
 
 
 async def check_budget_node(ctx: Context, node_input: dict) -> Event:
-    """Verify the buyer has sufficient budget."""
+    """Verify the price fits both the wallet budget and the request's cap."""
     user_id = ctx.state.get("user_id", "default")
     budget = await budget_check(user_id)
 
@@ -111,14 +109,19 @@ async def check_budget_node(ctx: Context, node_input: dict) -> Event:
         price = quote["quote"].get("priceUsdc", quote["quote"].get("price", 0.0))
 
     remaining = budget.get("remaining_usd", 0.0)
+    max_budget = float(ctx.state.get("max_budget_usd", 10.0))
 
-    if remaining >= price:
+    if price <= remaining and price <= max_budget:
         return Event(output={"approved": True, "budget": budget}, route="approved")
-    else:
-        return Event(
-            output={"approved": False, "budget": budget, "price": price},
-            route="rejected",
-        )
+    return Event(
+        output={
+            "approved": False,
+            "budget": budget,
+            "price": price,
+            "max_budget_usd": max_budget,
+        },
+        route="rejected",
+    )
 
 
 async def execute_purchase(ctx: Context, node_input: dict) -> dict:
@@ -129,7 +132,9 @@ async def execute_purchase(ctx: Context, node_input: dict) -> dict:
 
     return await stem_purchase(
         stem_id=selected["stem_id"],
-        license_type=selected.get("license_type", "personal"),
+        license_type=selected.get(
+            "license_type", ctx.state.get("license_type", "personal")
+        ),
     )
 
 

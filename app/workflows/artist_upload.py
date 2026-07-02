@@ -12,7 +12,6 @@ from google.adk.agents import LlmAgent
 from google.adk.agents.context import Context
 from google.adk.events.event import Event
 from google.adk.workflow import JoinNode, Workflow
-from google.genai import types
 from pydantic import BaseModel
 
 from app.config import (
@@ -23,19 +22,10 @@ from app.config import (
 )
 from app.schemas import STEM_TYPES
 from app.tools.artist import release_upload
+from app.workflows._parsing import node_text, parse_upload_input
 
 
 # ─── Schemas ─────────────────────────────────────────────────────────
-
-
-class UploadValidation(BaseModel):
-    is_valid: bool
-    title: str
-    artist_name: str
-    genre: str | None = None
-    moods: list[str] = []
-    audio_url: str = ""
-    issues: list[str] = []
 
 
 class RightsEvaluation(BaseModel):
@@ -48,28 +38,29 @@ class RightsEvaluation(BaseModel):
 
 
 def validate_upload(ctx: Context, node_input: Any) -> Event:
-    """Validate the upload request."""
-    text = ""
-    if isinstance(node_input, types.Content):
-        text = node_input.parts[0].text if node_input.parts else ""
-    elif isinstance(node_input, str):
-        text = node_input
-    else:
-        text = str(node_input)
-
+    """Validate and parse the upload request (JSON or natural language)."""
+    text = node_text(node_input)
+    parsed, issues = parse_upload_input(node_input)
+    if parsed is None:
+        return Event(
+            output={"is_valid": False, "issues": issues, "raw_input": text},
+            state={"upload_input": text, "upload_valid": False},
+        )
     return Event(
         output={
             "is_valid": True,
-            "title": "New Release",
-            "artist_name": "Artist",
+            "issues": [],
             "raw_input": text,
+            **parsed.model_dump(mode="json"),
         },
-        state={"upload_input": text},
+        state={"upload_input": text, "upload_valid": True},
     )
 
 
 async def process_stems(node_input: dict) -> dict:
     """Trigger stem separation via Demucs."""
+    if not node_input.get("is_valid", True):
+        return {"status": "invalid_upload", "issues": node_input.get("issues", [])}
     return await release_upload(
         title=node_input.get("title", "Untitled"),
         artist_name=node_input.get("artist_name", "Unknown"),
@@ -81,6 +72,8 @@ async def process_stems(node_input: dict) -> dict:
 
 def extract_metadata(node_input: dict) -> dict:
     """Extract and enrich release metadata."""
+    if not node_input.get("is_valid", True):
+        return {"status": "invalid_upload", "issues": node_input.get("issues", [])}
     return {
         "title": node_input.get("title", "Untitled"),
         "artist": node_input.get("artist_name", "Unknown"),
