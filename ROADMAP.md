@@ -31,7 +31,7 @@ Legend: ✅ done · 🔜 in progress / next · 🧭 planned · 🔒 blocked (nee
 | 🧭 | Eval harness (trajectory + final-response) per workflow, wired into CI as a gate | BL-05 |
 | 🧭 | Observability: Cloud Trace + structured logs (portable behind config) | BL-06 |
 | 🧭 | Managed Sessions/Memory behind config with in-memory fallback (replace `InMemoryRunner`) | BL-07 |
-| 🧭 | Deploy recipes (Agent Runtime + Cloud Run) — in private [resonate-agentic-iac](https://github.com/akoita/resonate-agentic-iac) (ADR-0005); here: build + deploy-intent | BL-08 |
+| 🧭 | Deploy recipes — **source-based Agent Runtime** per [ADR-0006](docs/adr/ADR-0006-agent-ops-deployment-model.md) (here: `AdkApp` + `deploy.py` + evalsets; CD in [resonate-agentic-iac](https://github.com/akoita/resonate-agentic-iac)); image path = Cloud Run fallback only | BL-08 |
 
 ## 🧭 Later
 
