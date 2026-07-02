@@ -13,6 +13,20 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
+from app.config import PRICE_COMMERCIAL_USD, PRICE_PERSONAL_USD, PRICE_REMIX_USD
+
+# The live backend exposes 7 stem types per track: 6 AI-separated
+# (Demucs htdemucs_6s) plus the original mix (verified in ADR-0001).
+STEM_TYPES: tuple[str, ...] = (
+    "vocals",
+    "drums",
+    "bass",
+    "guitar",
+    "piano",
+    "other",
+    "original",
+)
+
 
 # ─── Enums ───────────────────────────────────────────────────────────
 
@@ -99,7 +113,7 @@ class StemInfo(BaseModel):
 
     id: str
     track_id: str
-    stem_type: str = Field(description="One of: vocals, drums, bass, guitar, piano, other")
+    stem_type: str = Field(description=f"One of: {', '.join(STEM_TYPES)}")
     title: Optional[str] = None
     artist: Optional[str] = None
     duration_seconds: Optional[float] = None
@@ -128,9 +142,9 @@ class StemPricing(BaseModel):
     """Pricing tiers for a stem."""
 
     stem_id: str
-    base_play_price_usd: float = 0.05
-    remix_license_usd: float = 5.0
-    commercial_license_usd: float = 25.0
+    base_play_price_usd: float = PRICE_PERSONAL_USD
+    remix_license_usd: float = PRICE_REMIX_USD
+    commercial_license_usd: float = PRICE_COMMERCIAL_USD
     floor_usd: float = 0.01
     ceiling_usd: float = 50.0
 
@@ -335,9 +349,9 @@ class ArtistUploadInput(BaseModel):
     genre: Optional[str] = None
     moods: list[str] = Field(default_factory=list)
     audio_url: str = Field(description="URL or local path to the audio file")
-    base_price_usd: float = 0.05
-    remix_price_usd: float = 5.0
-    commercial_price_usd: float = 25.0
+    base_price_usd: float = PRICE_PERSONAL_USD
+    remix_price_usd: float = PRICE_REMIX_USD
+    commercial_price_usd: float = PRICE_COMMERCIAL_USD
     royalty_bps: int = 500
     auto_mint: bool = True
 

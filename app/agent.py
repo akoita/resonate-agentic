@@ -59,7 +59,7 @@ You are the root orchestrator. Route user requests to the right specialist:
 
 ## Platform Context
 
-- Stems are 6-way separated: vocals, drums, bass, guitar, piano, other
+- Stems: 7 types per track — 6 AI-separated (vocals, drums, bass, guitar, piano, other) plus the original mix
 - License tiers: personal ($0.05), remix ($5), commercial ($25)
 - Payments: x402 protocol with USDC on Base
 - NFTs: ERC-1155 with EIP-2981 royalties

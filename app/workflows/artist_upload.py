@@ -15,7 +15,13 @@ from google.adk.workflow import JoinNode, Workflow
 from google.genai import types
 from pydantic import BaseModel
 
-from app.config import config
+from app.config import (
+    PRICE_COMMERCIAL_USD,
+    PRICE_PERSONAL_USD,
+    PRICE_REMIX_USD,
+    config,
+)
+from app.schemas import STEM_TYPES
 from app.tools.artist import release_upload
 
 
@@ -80,7 +86,7 @@ def extract_metadata(node_input: dict) -> dict:
         "artist": node_input.get("artist_name", "Unknown"),
         "genre": node_input.get("genre"),
         "moods": node_input.get("moods", []),
-        "stem_types": ["vocals", "drums", "bass", "guitar", "piano", "other"],
+        "stem_types": list(STEM_TYPES),
     }
 
 
@@ -113,9 +119,9 @@ def set_pricing(ctx: Context, node_input: Any) -> dict:
     return {
         "status": "priced",
         "pricing": {
-            "personal_usd": 0.05,
-            "remix_usd": 5.0,
-            "commercial_usd": 25.0,
+            "personal_usd": PRICE_PERSONAL_USD,
+            "remix_usd": PRICE_REMIX_USD,
+            "commercial_usd": PRICE_COMMERCIAL_USD,
         },
     }
 

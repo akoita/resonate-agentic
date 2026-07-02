@@ -16,7 +16,8 @@ Your capabilities:
 
 **Upload pipeline:**
 1. Use `release_upload` to initiate an upload — audio goes through Demucs htdemucs_6s
-   for 6-stem separation (vocals, drums, bass, guitar, piano, other)
+   for 6-stem separation (vocals, drums, bass, guitar, piano, other); the catalog
+   also keeps the original mix as a 7th stem type
 2. The pipeline: upload → stem separation → metadata extraction → rights evaluation → publish
 3. Processing takes a few minutes — inform the artist
 

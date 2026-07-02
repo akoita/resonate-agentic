@@ -22,7 +22,7 @@
 
 ## What is this?
 
-Resonate turns music stems into **programmable IP**: artists publish 6-way separated stems (vocals, drums, bass, guitar, piano, other), and *agents* — not just humans — can search, quote, purchase, and license them autonomously.
+Resonate turns music stems into **programmable IP**: artists publish stems in 7 types — 6-way AI-separated (vocals, drums, bass, guitar, piano, other) plus the original mix — and *agents* — not just humans — can search, quote, purchase, and license them autonomously.
 
 **Resonate Agentic** is the multi-agent brain that sits on top, written in Python on **Google ADK 2.0**:
 

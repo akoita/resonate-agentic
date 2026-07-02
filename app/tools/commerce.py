@@ -11,6 +11,7 @@ from __future__ import annotations
 import httpx
 
 from app.config import config
+from app.tools._http import api_get, api_get_raw
 
 
 async def stem_purchase(
@@ -40,39 +41,37 @@ async def stem_purchase(
         If payment_proof is provided: dict with receipt, download URL, and license info.
     """
     headers: dict[str, str] = {}
-    if config.api_key:
-        headers["Authorization"] = f"Bearer {config.api_key}"
     if payment_proof:
         headers["X-PAYMENT"] = payment_proof
     if buyer_wallet:
         headers["X-Resonate-Buyer"] = buyer_wallet
 
     try:
-        async with httpx.AsyncClient(base_url=config.api_base, timeout=60.0) as client:
-            resp = await client.get(
-                f"/api/stems/{stem_id}/x402",
-                headers=headers,
-                params={"licenseType": license_type},
-            )
+        resp = await api_get_raw(
+            f"/api/stems/{stem_id}/x402",
+            params={"licenseType": license_type},
+            headers=headers,
+            timeout=60.0,
+        )
 
-            if resp.status_code == 402:
-                return {
-                    "status": "payment_required",
-                    "stem_id": stem_id,
-                    "license_type": license_type,
-                    "challenge": resp.headers.get("PAYMENT-REQUIRED", ""),
-                }
-
-            resp.raise_for_status()
+        if resp.status_code == 402:
             return {
-                "status": "purchased",
+                "status": "payment_required",
                 "stem_id": stem_id,
                 "license_type": license_type,
-                "receipt_id": resp.headers.get("X-Resonate-Receipt-Id", ""),
-                "receipt": resp.headers.get("X-Resonate-Receipt", ""),
-                "content_type": resp.headers.get("content-type", ""),
-                "size_bytes": len(resp.content),
+                "challenge": resp.headers.get("PAYMENT-REQUIRED", ""),
             }
+
+        resp.raise_for_status()
+        return {
+            "status": "purchased",
+            "stem_id": stem_id,
+            "license_type": license_type,
+            "receipt_id": resp.headers.get("X-Resonate-Receipt-Id", ""),
+            "receipt": resp.headers.get("X-Resonate-Receipt", ""),
+            "content_type": resp.headers.get("content-type", ""),
+            "size_bytes": len(resp.content),
+        }
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
@@ -121,38 +120,29 @@ async def budget_check(user_id: str) -> dict:
         Dictionary with balance, monthly cap, spent amount, remaining budget,
         and whether purchases are allowed.
     """
-    headers: dict[str, str] = {}
-    if config.api_key:
-        headers["Authorization"] = f"Bearer {config.api_key}"
-
     try:
-        async with httpx.AsyncClient(base_url=config.api_base, timeout=15.0) as client:
-            try:
-                resp = await client.get(
-                    f"/api/wallet/budget/{user_id}", headers=headers
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                remaining = data.get("monthlyCapUsd", 50.0) - data.get("spentUsd", 0.0)
-                return {
-                    "status": "ok",
-                    "user_id": user_id,
-                    "balance_usd": data.get("balanceUsd", 0.0),
-                    "monthly_cap_usd": data.get("monthlyCapUsd", 50.0),
-                    "spent_usd": data.get("spentUsd", 0.0),
-                    "remaining_usd": max(0.0, remaining),
-                    "can_purchase": remaining > 0,
-                }
-            except httpx.HTTPStatusError:
-                # No budget record yet — fall back to the configured default cap.
-                return {
-                    "status": "ok",
-                    "user_id": user_id,
-                    "balance_usd": config.default_budget_usd,
-                    "monthly_cap_usd": config.default_budget_usd,
-                    "spent_usd": 0.0,
-                    "remaining_usd": config.default_budget_usd,
-                    "can_purchase": True,
-                }
+        try:
+            data = await api_get(f"/api/wallet/budget/{user_id}", timeout=15.0)
+            remaining = data.get("monthlyCapUsd", 50.0) - data.get("spentUsd", 0.0)
+            return {
+                "status": "ok",
+                "user_id": user_id,
+                "balance_usd": data.get("balanceUsd", 0.0),
+                "monthly_cap_usd": data.get("monthlyCapUsd", 50.0),
+                "spent_usd": data.get("spentUsd", 0.0),
+                "remaining_usd": max(0.0, remaining),
+                "can_purchase": remaining > 0,
+            }
+        except httpx.HTTPStatusError:
+            # No budget record yet — fall back to the configured default cap.
+            return {
+                "status": "ok",
+                "user_id": user_id,
+                "balance_usd": config.default_budget_usd,
+                "monthly_cap_usd": config.default_budget_usd,
+                "spent_usd": 0.0,
+                "remaining_usd": config.default_budget_usd,
+                "can_purchase": True,
+            }
     except Exception as e:
         return {"status": "error", "error": str(e)}

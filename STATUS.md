@@ -2,6 +2,13 @@
 
 _Assessment date: 2026-06-17 · ADK installed: `google-adk` 2.2.0 · Python 3.13 (poetry venv), project targets 3.11_
 
+> **Update 2026-07-01:** Phase 1 is underway. Since this assessment: CI + security scans are live
+> (`ci.yml`, `security.yml`), the MCP toolset is wired to the backend `/mcp` (#7, PR #26), the budget
+> guardrail enforces spend via ADK tool callbacks (#10, PR #28), the 7-stem-type fix landed (#15),
+> and pricing constants / dep pins / `_http` reuse were cleaned up. Still open from the blockers
+> below: x402 proof generation (#9, needs a funded Base-Sepolia wallet) and the unverified non-MCP
+> routes (#8). Current state lives in [ROADMAP.md](ROADMAP.md) / [TECH_DEBT.md](TECH_DEBT.md).
+
 This is an **experimental agentic-first reimplementation** of [akoita/resonate](https://github.com/akoita/resonate)
 using Google's Agent Development Kit (ADK) 2.0. This document is the first honest status
 of where it stands and what it takes to reach a production deployment on GCP's professional
