@@ -67,6 +67,11 @@ address; foreign-network and over-cap challenges are never paid (`tests/test_x40
   - signing with the token's true domain → `invalid_exact_evm_signature` (verifier reconstructs
     from its own `extra.name`).
   **No spec-compliant client can settle** until the backend middleware sets `extra.name: "USDC"`.
-- Fix filed upstream against akoita/resonate. The gated live test (`tests/test_x402_live.py`)
-  re-proves the full discover→quote→pay→receipt the moment the backend deploys the fix.
-- Wallet state: the throwaway Base-Sepolia EOA holds 20 test USDC; no settlement occurred.
+- Fixed upstream: akoita/resonate#1309 → PR akoita/resonate#1310 (merged + deployed to staging
+  2026-07-02).
+
+**Live settlement PROVEN (2026-07-02, post-backend-fix):** the gated test
+(`tests/test_x402_live.py`) ran the full discover → quote → pay → receipt against staging and
+passed — one real **0.05-USDC** `stem.download` settlement on Base Sepolia via the exact scheme
+(EIP-3009, gasless for the payer). On-chain evidence: payer EOA balance moved 20.00 → 19.95 USDC.
+This issue's goal is met; #37 leaves draft.
